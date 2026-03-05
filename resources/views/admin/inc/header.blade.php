@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+@php
+    $settings = \App\Models\Setting::first();
+@endphp
+
+<head>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>{{ $title ?? 'Admin Panel' }}</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- site icon -->
+    <link rel="icon" href="{{ asset('storage/' . $settings->favicon) }}" type="image/png" />
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap.min.css') }}" />
+    <!-- site css -->
+    <link rel="stylesheet" href="{{ asset('backend/style.css') }}" />
+    <!-- responsive css -->
+    <link rel="stylesheet" href="{{ asset('backend/css/responsive.css') }}" />
+    <!-- select bootstrap -->
+    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-select.css') }}" />
+    <!-- scrollbar css -->
+    <link rel="stylesheet" href="{{ asset('backend/css/perfect-scrollbar.css') }}" />
+    <!-- custom css -->
+    <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}" />
+
+    <link rel="stylesheet" href="{{ asset('backend/css/dataTables.css') }}" />
+
+</head>
+
+<body class="dashboard dashboard_1">
+    @include('admin.inc.sweetalert')
+    <div class="full_container">
+        <div class="inner_container">
+            <!-- Sidebar  -->
+            <nav id="sidebar">
+                <div class="sidebar_blog_1">
+                    <div class="sidebar-header">
+                        <div class="logo_section">
+                            <a href="{{ url('/') }}">
+                                <img class="logo_icon img-responsive" src="{{ asset('storage/' . $settings->logo) }}"
+                                    alt="{{ $settings->name }}" title="{{ $settings->name }}" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sidebar_user_info">
+                        <div class="icon_setting"></div>
+                        <div class="user_profle_side">
+                            <div class="user_img"><img class="img-responsive"
+                                    src="{{ asset('storage/' . $settings->favicon) }}"
+                                    alt="{{ $settings->name ?? 'ExamInfoBlog' }}" /></div>
+                            <div class="user_info">
+                                <h6>{{ Auth::user()->role == 1 ? 'Super Admin' : 'Admin' }}</h6>
+                                <p><span class="online_animation"></span> Online</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar_blog_2">
+                    <h4>{{ Str::upper($settings->name) ?? 'ExamInfoBlog' }}</h4>
+                    <ul class="list-unstyled components">
+                        <!-- Deshboard List -->
+                        <li class="active">
+                            <a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard yellow_color"></i>
+                                <span>Dashboard</span></a>
+                        </li>
+                        <!-- Article List -->
+                        <li>
+                            <a href="#articles" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i
+                                    class="fa fa-newspaper-o purple_color"></i><span>Articles</span></a>
+                            <ul class="collapse list-unstyled" id="articles">
+                                <li><a href="{{ route('admin.posts.view') }}">> <span>View Articles</span></a></li>
+                                <li><a href="{{ route('admin.posts.create') }}">> <span>New Articles</span></a></li>
+                            </ul>
+                        </li>
+                        <!-- Article File -->
+                        <li>
+                            <a href="#files" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i
+                                    class="fa fa-image orange_color"></i><span>Article File</span></a>
+                            <ul class="collapse list-unstyled" id="files">
+                                <li><a href="{{ route('admin.attachements.view') }}">> <span>View Files</span></a></li>
+                                <li><a href="{{ route('admin.attachements.create') }}">> <span>New Files</span></a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Article Category -->
+                        <li>
+                            <a href="#category" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i
+                                    class="fa fa-tasks green_color"></i><span>Cotegory</span></a>
+                            <ul class="collapse list-unstyled" id="category">
+                                <li><a href="{{ route('admin.categories.view') }}">> <span>View Category</span></a>
+                                </li>
+                                <li><a href="{{ route('admin.categories.create') }}">> <span>New Category</span></a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Article Users Role -->
+                        <li>
+                            <a href="#user_role" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i
+                                    class="fa fa-plus purple_color"></i><span>Users Role</span></a>
+                            <ul class="collapse list-unstyled" id="user_role">
+                                <li><a href="{{ route('admin.roles.view') }}">> <span>View Role</span></a></li>
+                                <li><a href="{{ route('admin.roles.create') }}">> <span>New Role</span></a></li>
+                            </ul>
+                        </li>
+                        <!-- Article Users -->
+                        <li>
+                            <a href="#users" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i
+                                    class="fa fa-users red_color"></i><span>Users</span></a>
+                            <ul class="collapse list-unstyled" id="users">
+                                <li><a href="{{ route('admin.users.view') }}">> <span>View Users</span></a></li>
+                                <li><a href="{{ route('admin.users.create') }}">> <span>New Users</span></a></li>
+                            </ul>
+                        </li>
+                        <!-- Article Settings -->
+                        <li>
+                            <a href="#settings" data-toggle="collapse" aria-expanded="false"
+                                class="dropdown-toggle"><i
+                                    class="fa fa-cogs blue2_color"></i><span>Settings</span></a>
+                            <ul class="collapse list-unstyled" id="settings">
+                                <li><a href="{{ route('admin.settings') }}">> <span>Manage Settings</span></a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- end sidebar -->
+            <!-- right content -->
+            <div id="content">
+                <!-- topbar -->
+                <div class="topbar">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        <div class="full">
+                            <button type="button" id="sidebarCollapse" class="sidebar_toggle">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <div class="right_topbar">
+
+                                <div class="icon_info">
+                                    <ul>
+                                        <li>
+                                            <a href="#" id="notification" class="dropdown-toggle"
+                                                data-toggle="dropdown">
+                                                <i class="fa fa-bell-o"></i>
+                                                <span class="badge" id="notification_count">2</span>
+                                            </a>
+                                            <div class="dropdown-menu" x-placement="left-start">
+                                                <ul>
+                                                    <li class="dropdown-item"> notification </li>
+                                                    <li class="dropdown-item"> notification </li>
+                                                    <li class="dropdown-item"> notification </li>
+                                                    <li class="dropdown-item"> notification </li>
+                                                    <li class="dropdown-item"> notification </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <ul class="user_profile_dd">
+                                        <li>
+                                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                                <img class="img-responsive rounded-circle"
+                                                    src="{{ asset('backend/images/layout_img/user_img.jpg') }}"
+                                                    alt="#" />
+                                                <span class="name_user">{{ Auth::user()->name ?? 'Guest' }}</span>
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.profile', Auth::user()->id) }}">
+                                                    <i class="fa fa-user"></i>
+                                                    My Profile
+                                                </a>
+                                                <a class="dropdown-item" href="{{ route('admin.logout') }}">
+                                                    <span>
+                                                        <i class="fa fa-sign-out"></i>
+                                                        Log Out
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <!-- end topbar -->
+                <div class="midde_cont">
