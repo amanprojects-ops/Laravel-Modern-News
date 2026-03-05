@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/amanprojects-ops/laravel-modern-news">
-    <img src="storage/app/public/images/75e094b0385fdd05.webp" alt="Logo" width="200">
+    <img src="public/uploads/images/b40c171624ebc9de.png" alt="Logo" width="200">
   </a>
 
   <h1 align="center">Modern News</h1>
