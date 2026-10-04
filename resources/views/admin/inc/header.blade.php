@@ -2,6 +2,19 @@
 <html lang="en">
 @php
     $settings = \App\Models\Setting::first();
+    // Null-safe fallback so nothing crashes if settings row is missing
+    if (!$settings) {
+        $settings = new \App\Models\Setting([
+            'name'        => config('app.name', 'Admin Panel'),
+            'title'       => config('app.name', 'Admin Panel'),
+            'logo'        => null,
+            'logo_dark'   => null,
+            'favicon'     => null,
+            'keywords'    => '',
+            'description' => '',
+            'meta_author' => '',
+        ]);
+    }
 @endphp
 
 <head>
@@ -12,12 +25,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
-    <title>{{ $title ?? 'Admin Panel' }}</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <title>{{ $title ?? ($settings->name ? $settings->name . ' — Admin Panel' : 'Admin Panel') }}</title>
+    <meta name="keywords" content="{{ $settings->keywords ?? '' }}">
+    <meta name="description" content="{{ $settings->description ?? '' }}">
+    <meta name="author" content="{{ $settings->meta_author ?? $settings->name ?? '' }}">
     <!-- site icon -->
+    @if($settings->favicon)
     <link rel="icon" href="{{ asset('storage/' . $settings->favicon) }}" type="image/png" />
+    @endif
+    @if($settings->apple_touch_icon ?? null)
+    <link rel="apple-touch-icon" href="{{ asset('storage/' . $settings->apple_touch_icon) }}" />
+    @endif
     <!-- bootstrap css -->
     <link rel="stylesheet" href="{{ asset('backend/css/bootstrap.min.css') }}" />
     <!-- site css -->
@@ -45,17 +63,31 @@
                     <div class="sidebar-header">
                         <div class="logo_section">
                             <a href="{{ url('/') }}">
+                                @if($settings->logo)
                                 <img class="logo_icon img-responsive" src="{{ asset('storage/' . $settings->logo) }}"
-                                    alt="{{ $settings->name }}" title="{{ $settings->name }}" />
+                                    alt="{{ $settings->name ?? 'Site Logo' }}" title="{{ $settings->name ?? '' }}" />
+                                @else
+                                <span style="color:#fff;font-size:1.1rem;font-weight:700;letter-spacing:1px;padding:6px 0;display:block;">
+                                    {{ $settings->name ?? config('app.name') }}
+                                </span>
+                                @endif
                             </a>
                         </div>
                     </div>
                     <div class="sidebar_user_info">
                         <div class="icon_setting"></div>
                         <div class="user_profle_side">
-                            <div class="user_img"><img class="img-responsive"
+                            <div class="user_img">
+                                @if($settings->favicon)
+                                <img class="img-responsive"
                                     src="{{ asset('storage/' . $settings->favicon) }}"
-                                    alt="{{ $settings->name ?? 'ExamInfoBlog' }}" /></div>
+                                    alt="{{ $settings->name ?? config('app.name') }}" />
+                                @else
+                                <img class="img-responsive"
+                                    src="{{ asset('backend/images/layout_img/user_img.jpg') }}"
+                                    alt="{{ $settings->name ?? config('app.name') }}" />
+                                @endif
+                            </div>
                             <div class="user_info">
                                 <h6>{{ Auth::user()->role == 1 ? 'Super Admin' : 'Admin' }}</h6>
                                 <p><span class="online_animation"></span> Online</p>
@@ -64,7 +96,7 @@
                     </div>
                 </div>
                 <div class="sidebar_blog_2">
-                    <h4>{{ Str::upper($settings->name) ?? 'ExamInfoBlog' }}</h4>
+                    <h4>{{ Str::upper($settings->name ?? config('app.name', 'NEWS ADMIN')) }}</h4>
                     <ul class="list-unstyled components">
                         <!-- Deshboard List -->
                         <li class="active">
