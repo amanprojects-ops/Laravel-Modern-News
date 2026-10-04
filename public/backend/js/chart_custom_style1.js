@@ -124,27 +124,36 @@
 			}
 		});
 
-		window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
-			window.myBar = new Chart(ctx, {
-				type: 'bar',
-				data: barChartData,
-				options: {
-					responsive: true,
-					title: {
-						display: false,
-						text: 'Chart.js Combo Bar Line Chart'
-					},
-				}
-			});
-		};
-
-		document.getElementById('randomizeData').addEventListener('click', function() {
-			barChartData.datasets.forEach(function(dataset) {
-				dataset.data = dataset.data.map(function() {
-					return randomScalingFactor();
+		window.addEventListener('load', function() {
+			var canvasElem = document.getElementById('canvas');
+			if (canvasElem) {
+				var ctx = canvasElem.getContext('2d');
+				window.myBar = new Chart(ctx, {
+					type: 'bar',
+					data: barChartData,
+					options: {
+						responsive: true,
+						title: {
+							display: false,
+							text: 'Chart.js Combo Bar Line Chart'
+						},
+					}
 				});
-			});
-			window.myBar.update();
+			}
+
+			var randomizeBtn = document.getElementById('randomizeData');
+			if (randomizeBtn) {
+				randomizeBtn.addEventListener('click', function() {
+					barChartData.datasets.forEach(function(dataset) {
+						dataset.data = dataset.data.map(function() {
+							return randomScalingFactor();
+						});
+					});
+					if (window.myBar) {
+						window.myBar.update();
+					}
+				});
+			}
 		});
+
 		
