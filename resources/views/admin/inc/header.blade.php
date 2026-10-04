@@ -51,6 +51,41 @@
 
     <link rel="stylesheet" href="{{ asset('backend/css/dataTables.css') }}" />
 
+    <style>
+    /* ── Initials Avatar ── */
+    .initials-avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #fff;
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .5px;
+        flex-shrink: 0;
+        text-transform: uppercase;
+        user-select: none;
+    }
+    .initials-avatar.lg {
+        width: 48px;
+        height: 48px;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+    /* ── Logo text fallback ── */
+    .logo-text-fallback {
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 6px 0;
+        display: block;
+    }
+    </style>
+
 </head>
 
 <body class="dashboard dashboard_1">
@@ -64,10 +99,17 @@
                         <div class="logo_section">
                             <a href="{{ url('/') }}">
                                 @if($settings->logo)
-                                <img class="logo_icon img-responsive" src="{{ asset('storage/' . $settings->logo) }}"
-                                    alt="{{ $settings->name ?? 'Site Logo' }}" title="{{ $settings->name ?? '' }}" />
+                                <img class="logo_icon img-responsive"
+                                    src="{{ asset('storage/' . $settings->logo) }}"
+                                    alt="{{ $settings->name ?? 'Site Logo' }}"
+                                    title="{{ $settings->name ?? '' }}"
+                                    onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
+                                />
+                                <span class="logo-text-fallback" style="display:none;">
+                                    {{ $settings->name ?? config('app.name') }}
+                                </span>
                                 @else
-                                <span style="color:#fff;font-size:1.1rem;font-weight:700;letter-spacing:1px;padding:6px 0;display:block;">
+                                <span class="logo-text-fallback">
                                     {{ $settings->name ?? config('app.name') }}
                                 </span>
                                 @endif
@@ -78,15 +120,15 @@
                         <div class="icon_setting"></div>
                         <div class="user_profle_side">
                             <div class="user_img">
-                                @if($settings->favicon)
-                                <img class="img-responsive"
-                                    src="{{ asset('storage/' . $settings->favicon) }}"
-                                    alt="{{ $settings->name ?? config('app.name') }}" />
-                                @else
-                                <img class="img-responsive"
-                                    src="{{ asset('backend/images/layout_img/user_img.jpg') }}"
-                                    alt="{{ $settings->name ?? config('app.name') }}" />
-                                @endif
+                                @php
+                                    $authUser   = Auth::user();
+                                    $uInitials  = collect(explode(' ', $authUser->name ?? 'A'))
+                                                    ->map(fn($w) => strtoupper($w[0]))
+                                                    ->take(2)->implode('');
+                                @endphp
+                                <div class="initials-avatar lg" title="{{ $authUser->name ?? '' }}">
+                                    {{ $uInitials }}
+                                </div>
                             </div>
                             <div class="user_info">
                                 <h6>{{ Auth::user()->role == 1 ? 'Super Admin' : 'Admin' }}</h6>
@@ -196,10 +238,15 @@
                                     </ul>
                                     <ul class="user_profile_dd">
                                         <li>
-                                            <a class="dropdown-toggle" data-toggle="dropdown">
-                                                <img class="img-responsive rounded-circle"
-                                                    src="{{ asset('backend/images/layout_img/user_img.jpg') }}"
-                                                    alt="#" />
+                                            <a class="dropdown-toggle" data-toggle="dropdown" style="display:flex;align-items:center;gap:8px;">
+                                                @php
+                                                    $topInitials = collect(explode(' ', Auth::user()->name ?? 'A'))
+                                                                    ->map(fn($w) => strtoupper($w[0]))
+                                                                    ->take(2)->implode('');
+                                                @endphp
+                                                <span class="initials-avatar" title="{{ Auth::user()->name ?? '' }}">
+                                                    {{ $topInitials }}
+                                                </span>
                                                 <span class="name_user">{{ Auth::user()->name ?? 'Guest' }}</span>
                                             </a>
                                             <div class="dropdown-menu">
