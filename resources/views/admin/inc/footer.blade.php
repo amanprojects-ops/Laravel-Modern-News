@@ -107,6 +107,7 @@
 <!-- custom js -->
 <script src="{{ asset('backend/js/custom.js') }}"></script>
 <script src="{{ asset('backend/js/chart_custom_style1.js') }}"></script>
+@stack('scripts')
 </body>
 
 </html>
