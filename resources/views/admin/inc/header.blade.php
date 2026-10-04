@@ -29,7 +29,7 @@
     <!-- scrollbar css -->
     <link rel="stylesheet" href="{{ asset('backend/css/perfect-scrollbar.css') }}" />
     <!-- custom css -->
-    <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}?v={{ file_exists(public_path('backend/css/custom.css')) ? filemtime(public_path('backend/css/custom.css')) : time() }}" />
 
     <link rel="stylesheet" href="{{ asset('backend/css/dataTables.css') }}" />
 
