@@ -118,10 +118,35 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     //Settings Management Routes
     Route::prefix('settings')->group(function () {
         Route::get('/', [SettingController::class, 'settings'])->name('admin.settings');
+
+        // Website / General
         Route::put('general/update', [SettingController::class, 'updateGeneralSettings'])->name('admin.settings.general.update');
-        Route::put('basic/update', [SettingController::class, 'updateBasicSettings'])->name('admin.settings.basic.update');
-        Route::put('social-media-settings/update', [SettingController::class, 'updateSocialMediaSettings'])->name('admin.social-media-settings.update');
+
+        // SEO
+        Route::put('seo/update', [SettingController::class, 'updateSeoSettings'])->name('admin.settings.seo.update');
+
+        // Logo & Images
         Route::put('images/update', [SettingController::class, 'updateImageSettings'])->name('admin.settings.images-update');
+
+        // Social Media
+        Route::put('social-media/update', [SettingController::class, 'updateSocialMediaSettings'])->name('admin.social-media-settings.update');
+        // legacy alias
+        Route::put('basic/update', [SettingController::class, 'updateSeoSettings'])->name('admin.settings.basic.update');
+
+        // SMTP Email
+        Route::put('smtp/update', [SettingController::class, 'updateSmtpSettings'])->name('admin.settings.smtp.update');
+        Route::post('smtp/test', [SettingController::class, 'testSmtp'])->name('admin.settings.smtp.test');
+
+        // Telegram
+        Route::put('telegram/update', [SettingController::class, 'updateTelegramSettings'])->name('admin.settings.telegram.update');
+        Route::post('telegram/fetch-bot', [SettingController::class, 'fetchTelegramBotDetails'])->name('admin.settings.telegram.fetch-bot');
+        Route::post('telegram/setup-webhook', [SettingController::class, 'setupTelegramWebhook'])->name('admin.settings.telegram.setup-webhook');
+        Route::post('telegram/delete-webhook', [SettingController::class, 'deleteTelegramWebhook'])->name('admin.settings.telegram.delete-webhook');
+        Route::post('telegram/test', [SettingController::class, 'testTelegram'])->name('admin.settings.telegram.test');
+
+        // Web Push
+        Route::put('webpush/update', [SettingController::class, 'updateWebPushSettings'])->name('admin.settings.webpush.update');
+        Route::get('webpush/generate-vapid', [SettingController::class, 'generateVapidKeys'])->name('admin.settings.webpush.generate-vapid');
     });
 
     //Admin Profile Routes
