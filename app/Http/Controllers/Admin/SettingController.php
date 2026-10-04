@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\UploadHelper;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -35,9 +35,9 @@ class SettingController
 
         $settings = Setting::first();
         $settings->update([
-            'name'  => $request->name,
-            'title' => $request->title,
-            'url'   => $request->url,
+            'name'                => $request->name,
+            'title'               => $request->title,
+            'url'                 => $request->url,
             'maintenance_mode'    => $request->boolean('maintenance_mode'),
             'maintenance_message' => $request->maintenance_message,
         ]);
@@ -73,36 +73,41 @@ class SettingController
     }
 
     // ─────────────────────────────────────────────────────────────
-    // 3. LOGO & FAVICON SETTINGS
+    // 3. LOGO & FAVICON — now stored in public/uploads/images/
     // ─────────────────────────────────────────────────────────────
     public function updateImageSettings(Request $request)
     {
         $request->validate([
-            'logo'            => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
-            'logo_dark'       => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
-            'favicon'         => 'nullable|image|mimes:png,jpg,jpeg,ico|max:512',
-            'apple_touch_icon'=> 'nullable|image|mimes:png,jpg,jpeg|max:512',
-            'og_image'        => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
-            'main_image'      => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
+            'logo'             => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
+            'logo_dark'        => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
+            'favicon'          => 'nullable|image|mimes:png,jpg,jpeg,ico|max:512',
+            'apple_touch_icon' => 'nullable|image|mimes:png,jpg,jpeg|max:512',
+            'og_image'         => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
+            'main_image'       => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
         ]);
 
         $settings = Setting::first();
+
+        // Map: input name => [db column, folder]
         $fileFields = [
-            'logo'             => 'logo',
-            'logo_dark'        => 'logo_dark',
-            'favicon'          => 'favicon',
-            'apple_touch_icon' => 'apple_touch_icon',
-            'og_image'         => 'og_image',
-            'main_image'       => 'image',
+            'logo'             => ['logo',             'images'],
+            'logo_dark'        => ['logo_dark',        'images'],
+            'favicon'          => ['favicon',          'images'],
+            'apple_touch_icon' => ['apple_touch_icon', 'images'],
+            'og_image'         => ['og_image',         'images'],
+            'main_image'       => ['image',            'images'],
         ];
 
-        foreach ($fileFields as $inputName => $dbField) {
+        foreach ($fileFields as $inputName => [$dbField, $folder]) {
             if ($request->hasFile($inputName)) {
-                $ext       = $request->file($inputName)->getClientOriginalExtension();
-                $fileName  = bin2hex(random_bytes(8)) . '.' . $ext;
-                $settings->$dbField = $request->file($inputName)->storeAs('images', $fileName, 'public');
+                $settings->$dbField = UploadHelper::upload(
+                    $request->file($inputName),
+                    $folder,
+                    $settings->$dbField  // old path for auto-deletion
+                );
             }
         }
+
         $settings->save();
         return back()->with('success', '✅ Images updated successfully.');
     }
@@ -141,18 +146,16 @@ class SettingController
     public function updateSmtpSettings(Request $request)
     {
         $request->validate([
-            'smtp_host'        => 'required|string|max:255',
-            'smtp_port'        => 'required|integer|between:1,65535',
-            'smtp_username'    => 'required|string|max:255',
-            'smtp_password'    => 'nullable|string|max:255',
-            'smtp_encryption'  => ['required', Rule::in(['tls', 'ssl', 'none'])],
-            'mail_from_name'   => 'required|string|max:100',
-            'mail_from_address'=> 'required|email|max:255',
+            'smtp_host'         => 'required|string|max:255',
+            'smtp_port'         => 'required|integer|between:1,65535',
+            'smtp_username'     => 'required|string|max:255',
+            'smtp_password'     => 'nullable|string|max:255',
+            'smtp_encryption'   => ['required', Rule::in(['tls', 'ssl', 'none'])],
+            'mail_from_name'    => 'required|string|max:100',
+            'mail_from_address' => 'required|email|max:255',
         ]);
 
-        $settings = Setting::first();
-
-        // Encrypt sensitive fields
+        $settings     = Setting::first();
         $smtpPassword = $request->smtp_password
             ? encrypt($request->smtp_password)
             : $settings->smtp_password;
@@ -167,21 +170,13 @@ class SettingController
             'mail_from_address' => $request->mail_from_address,
         ]);
 
-        // Update runtime mail config
         $this->applySmtpConfig($settings->fresh());
-
         return back()->with('success', '✅ SMTP settings updated successfully.');
     }
 
-    /**
-     * Test SMTP by sending a test email.
-     */
     public function testSmtp(Request $request)
     {
-        $request->validate([
-            'test_email' => 'required|email',
-        ]);
-
+        $request->validate(['test_email' => 'required|email']);
         $settings = Setting::first();
         $this->applySmtpConfig($settings);
 
@@ -218,42 +213,34 @@ class SettingController
     public function updateTelegramSettings(Request $request)
     {
         $request->validate([
-            'tg_group_link'     => 'nullable|max:255',
-            'tg_bot_token'      => 'nullable|max:255',
-            'tg_chat_id'        => 'nullable|max:100',
-            'tg_admin_chat_id'  => 'nullable|max:100',
+            'tg_group_link'    => 'nullable|max:255',
+            'tg_bot_token'     => 'nullable|max:255',
+            'tg_chat_id'       => 'nullable|max:100',
+            'tg_admin_chat_id' => 'nullable|max:100',
         ]);
 
         $settings = Setting::first();
-
-        // Encrypt bot token if changed
         $botToken = $request->tg_bot_token
             ? ($request->tg_bot_token !== $settings->tg_bot_token_decrypted ? encrypt($request->tg_bot_token) : $settings->tg_bot_token)
             : $settings->tg_bot_token;
 
         $settings->update([
-            'tg_group_link'       => $request->tg_group_link,
-            'tgChannel'           => $request->tg_channel,
-            'tg_bot_token'        => $botToken,
-            'tg_chat_id'          => $request->tg_chat_id,
-            'tg_admin_chat_id'    => $request->tg_admin_chat_id,
-            'tg_auto_post'        => $request->boolean('tg_auto_post'),
-            'tg_send_confirmation'=> $request->boolean('tg_send_confirmation'),
+            'tg_group_link'        => $request->tg_group_link,
+            'tgChannel'            => $request->tg_channel,
+            'tg_bot_token'         => $botToken,
+            'tg_chat_id'           => $request->tg_chat_id,
+            'tg_admin_chat_id'     => $request->tg_admin_chat_id,
+            'tg_auto_post'         => $request->boolean('tg_auto_post'),
+            'tg_send_confirmation' => $request->boolean('tg_send_confirmation'),
         ]);
         return back()->with('success', '✅ Telegram settings updated successfully.');
     }
 
-    /**
-     * Fetch Telegram Bot info (getMe).
-     */
     public function fetchTelegramBotDetails(Request $request)
     {
         $settings = Setting::first();
         $token    = $settings->tg_bot_token_decrypted;
-
-        if (!$token) {
-            return back()->with('error', '❌ Telegram bot token not configured.');
-        }
+        if (!$token) return back()->with('error', '❌ Bot token not configured.');
 
         try {
             $response = Http::timeout(10)->get("https://api.telegram.org/bot{$token}/getMe");
@@ -268,35 +255,24 @@ class SettingController
         }
     }
 
-    /**
-     * Set Telegram Webhook.
-     */
     public function setupTelegramWebhook(Request $request)
     {
-        $request->validate([
-            'webhook_url' => 'required|url',
-        ]);
-
+        $request->validate(['webhook_url' => 'required|url']);
         $settings = Setting::first();
         $token    = $settings->tg_bot_token_decrypted;
-
-        if (!$token) {
-            return back()->with('error', '❌ Bot token not configured.');
-        }
+        if (!$token) return back()->with('error', '❌ Bot token not configured.');
 
         try {
             $response = Http::timeout(10)->post("https://api.telegram.org/bot{$token}/setWebhook", [
                 'url' => $request->webhook_url,
             ]);
-
             if ($response->successful() && $response->json('ok')) {
-                // Get webhook info
                 $info = Http::timeout(10)->get("https://api.telegram.org/bot{$token}/getWebhookInfo")->json();
                 $settings->update([
                     'tg_webhook_url'     => $request->webhook_url,
                     'tg_webhook_details' => json_encode($info['result'] ?? [], JSON_PRETTY_PRINT),
                 ]);
-                return back()->with('success', '✅ Webhook set successfully to: ' . $request->webhook_url);
+                return back()->with('success', '✅ Webhook set: ' . $request->webhook_url);
             }
             return back()->with('error', '❌ Failed: ' . $response->json('description'));
         } catch (\Exception $e) {
@@ -304,52 +280,36 @@ class SettingController
         }
     }
 
-    /**
-     * Delete Telegram Webhook.
-     */
     public function deleteTelegramWebhook()
     {
         $settings = Setting::first();
         $token    = $settings->tg_bot_token_decrypted;
-
-        if (!$token) {
-            return back()->with('error', '❌ Bot token not configured.');
-        }
+        if (!$token) return back()->with('error', '❌ Bot token not configured.');
 
         try {
-            $response = Http::timeout(10)->post("https://api.telegram.org/bot{$token}/deleteWebhook");
-            if ($response->successful()) {
-                $settings->update(['tg_webhook_url' => null, 'tg_webhook_details' => null]);
-                return back()->with('success', '✅ Webhook removed successfully.');
-            }
-            return back()->with('error', '❌ Failed to remove webhook.');
+            Http::timeout(10)->post("https://api.telegram.org/bot{$token}/deleteWebhook");
+            $settings->update(['tg_webhook_url' => null, 'tg_webhook_details' => null]);
+            return back()->with('success', '✅ Webhook removed.');
         } catch (\Exception $e) {
             return back()->with('error', '❌ Error: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Send a test Telegram message to admin chat.
-     */
     public function testTelegram(Request $request)
     {
         $settings = Setting::first();
         $token    = $settings->tg_bot_token_decrypted;
         $chatId   = $settings->tg_admin_chat_id;
-
-        if (!$token || !$chatId) {
-            return back()->with('error', '❌ Bot token or admin chat ID not configured.');
-        }
+        if (!$token || !$chatId) return back()->with('error', '❌ Bot token or admin chat ID not configured.');
 
         try {
             $response = Http::timeout(10)->post("https://api.telegram.org/bot{$token}/sendMessage", [
                 'chat_id'    => $chatId,
-                'text'       => "✅ *Test message from " . ($settings->name ?? 'News Admin') . " panel*\n\nTelegram integration is working correctly!",
+                'text'       => "✅ *Test message from " . ($settings->name ?? 'News Admin') . " panel*\n\nTelegram integration is working!",
                 'parse_mode' => 'Markdown',
             ]);
-
             if ($response->successful() && $response->json('ok')) {
-                return back()->with('success', '✅ Test message sent successfully to admin chat!');
+                return back()->with('success', '✅ Test message sent to admin chat!');
             }
             return back()->with('error', '❌ Failed: ' . $response->json('description'));
         } catch (\Exception $e) {
@@ -368,8 +328,7 @@ class SettingController
             'push_app_name'     => 'nullable|string|max:100',
         ]);
 
-        $settings = Setting::first();
-
+        $settings     = Setting::first();
         $vapidPrivate = $request->vapid_private_key
             ? encrypt($request->vapid_private_key)
             : $settings->vapid_private_key;
@@ -383,27 +342,18 @@ class SettingController
         return back()->with('success', '✅ Web Push settings updated successfully.');
     }
 
-    /**
-     * Generate new VAPID keys.
-     */
     public function generateVapidKeys()
     {
-        // Generate VAPID key pair using openssl
         $privateKey = openssl_pkey_new(['curve_name' => 'prime256v1', 'private_key_type' => OPENSSL_KEYTYPE_EC]);
         $details    = openssl_pkey_get_details($privateKey);
-
-        // Base64url encode
         $publicKey  = rtrim(strtr(base64_encode($details['ec']['x'] . $details['ec']['y']), '+/', '-_'), '=');
-
         openssl_pkey_export($privateKey, $privatePem);
         $privateKeyRaw = rtrim(strtr(base64_encode($details['ec']['d']), '+/', '-_'), '=');
 
         return response()->json([
-            'public_key'  => $details['key'],
-            'private_key' => $privatePem,
-            'vapid_public'  => 'BP' . $publicKey,  // with uncompressed point prefix
+            'vapid_public'  => 'BP' . $publicKey,
             'vapid_private' => $privateKeyRaw,
-            'message' => 'Keys generated. Copy and save securely.',
+            'message'       => 'Keys generated. Copy and save securely.',
         ]);
     }
 }

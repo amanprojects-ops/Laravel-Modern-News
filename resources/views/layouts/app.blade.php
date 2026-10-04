@@ -1,4 +1,4 @@
-@php
+﻿@php
     use Illuminate\Support\Facades\Request;
     use Illuminate\Support\Facades\DB;
 
@@ -138,7 +138,7 @@
     <link rel="stylesheet" href="{{ asset('') }}assets/css/style.css">
     <!-- Web App Manifest -->
     <link rel="manifest" href="{{ asset('') }}manifest.json">
-    <link rel="shortcut icon" href="{{ asset('storage/images/' . $settings->favicon) }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('uploads/' . $settings->favicon) }}" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('') }}/assets/web-kits/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('') }}/assets/web-kits/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('') }}/assets/web-kits/favicon-16x16.png">
@@ -181,12 +181,12 @@
                 <button id="close-sabkebot" class="sabkebot-close" aria-label="Close SabkeBot">&times;</button>
             </div>
             <div class="sabkebot-message">
-                <p>Welcome to {{ $settings['name'] }}! 👋</p>
+                <p>Welcome to {{ $settings['name'] }}! ðŸ‘‹</p>
                 <p>For faster access to breaking news, add our app to your home screen!</p>
                 <ul class="sabkebot-benefits">
-                    <li>✓ Instant access anytime</li>
-                    <li>✓ Smooth, app-like experience</li>
-                    <li>✓ No need to open a browser</li>
+                    <li>âœ“ Instant access anytime</li>
+                    <li>âœ“ Smooth, app-like experience</li>
+                    <li>âœ“ No need to open a browser</li>
                 </ul>
                 <button id="install-pwa-btn" class="sabkebot-install-btn">Install App</button>
             </div>
@@ -197,7 +197,7 @@
         <div class="container">
             <header class="heading">
                 <a href="{{ url('home') }}" aria-label="{{ $settings['name'] }}">
-                    <img class="heading-logo" src="{{ asset('storage/' . $settings->logo) }}"
+                    <img class="heading-logo" src="{{ asset('uploads/' . $settings->logo) }}"
                         alt="{{ $settings['name'] }}" loading="lazy"
                         style="width: 150px; height: 50px; border-radius: 5%; object-fit: cover;">
                 </a>
@@ -517,3 +517,4 @@
 </body>
 
 </html>
+

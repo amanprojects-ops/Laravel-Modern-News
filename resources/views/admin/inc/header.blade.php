@@ -31,10 +31,10 @@
     <meta name="author" content="{{ $settings->meta_author ?? $settings->name ?? '' }}">
     <!-- site icon -->
     @if($settings->favicon)
-    <link rel="icon" href="{{ asset('storage/' . $settings->favicon) }}" type="image/png" />
+    <link rel="icon" href="{{ asset('uploads/' . $settings->favicon) }}" type="image/png" />
     @endif
     @if($settings->apple_touch_icon ?? null)
-    <link rel="apple-touch-icon" href="{{ asset('storage/' . $settings->apple_touch_icon) }}" />
+    <link rel="apple-touch-icon" href="{{ asset('uploads/' . $settings->apple_touch_icon) }}" />
     @endif
     <!-- bootstrap css -->
     <link rel="stylesheet" href="{{ asset('backend/css/bootstrap.min.css') }}" />
@@ -100,14 +100,11 @@
                             <a href="{{ url('/') }}">
                                 @if($settings->logo)
                                 <img class="logo_icon img-responsive"
-                                    src="{{ asset('storage/' . $settings->logo) }}"
+                                    src="{{ asset('uploads/' . $settings->logo) }}"
                                     alt="{{ $settings->name ?? 'Site Logo' }}"
                                     title="{{ $settings->name ?? '' }}"
                                     onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
                                 />
-                                <span class="logo-text-fallback" style="display:none;">
-                                    {{ $settings->name ?? config('app.name') }}
-                                </span>
                                 @else
                                 <span class="logo-text-fallback">
                                     {{ $settings->name ?? config('app.name') }}
@@ -129,10 +126,6 @@
                                 <div class="initials-avatar lg" title="{{ $authUser->name ?? '' }}">
                                     {{ $uInitials }}
                                 </div>
-                            </div>
-                            <div class="user_info">
-                                <h6>{{ Auth::user()->role == 1 ? 'Super Admin' : 'Admin' }}</h6>
-                                <p><span class="online_animation"></span> Online</p>
                             </div>
                         </div>
                     </div>

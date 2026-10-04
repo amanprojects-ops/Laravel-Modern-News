@@ -1,8 +1,8 @@
-@include('admin.inc.header')
+﻿@include('admin.inc.header')
 
-{{-- ═══════════════════════════════════════════════════════════════
+{{-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      SETTINGS PAGE STYLES
-═══════════════════════════════════════════════════════════════ --}}
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
 <style>
 :root {
     --set-primary: #6366f1;
@@ -19,10 +19,10 @@
     --set-input-bg: #0f172a;
 }
 
-/* ── Settings Page Layout ── */
+/* â”€â”€ Settings Page Layout â”€â”€ */
 .settings-page { padding: 0 0 40px; }
 
-/* ── Page Header ── */
+/* â”€â”€ Page Header â”€â”€ */
 .settings-hero {
     background: linear-gradient(135deg, #1e1b4b 0%, #1e293b 40%, #0f172a 100%);
     border-bottom: 1px solid var(--set-border);
@@ -51,7 +51,7 @@
 .settings-hero h1 i { color: var(--set-primary); font-size: 1.4rem; }
 .settings-hero p { color: var(--set-muted); font-size: .9rem; margin: 0; }
 
-/* ── Tab Navigation ── */
+/* â”€â”€ Tab Navigation â”€â”€ */
 .settings-tabs-wrapper {
     background: var(--set-card);
     border-bottom: 1px solid var(--set-border);
@@ -91,12 +91,12 @@
     color: var(--set-primary);
 }
 
-/* ── Tab Content ── */
+/* â”€â”€ Tab Content â”€â”€ */
 .settings-body { padding: 28px; }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
 
-/* ── Settings Card ── */
+/* â”€â”€ Settings Card â”€â”€ */
 .s-card {
     background: var(--set-card);
     border: 1px solid var(--set-border);
@@ -134,7 +134,7 @@
 .s-card-subtitle { font-size: .78rem; color: var(--set-muted); margin: 2px 0 0; }
 .s-card-body { padding: 24px; }
 
-/* ── Form Controls ── */
+/* â”€â”€ Form Controls â”€â”€ */
 .s-form-group { margin-bottom: 20px; }
 .s-label {
     display: block;
@@ -198,7 +198,7 @@
 }
 .s-password-toggle:hover { color: var(--set-primary); }
 
-/* ── Toggle Switch ── */
+/* â”€â”€ Toggle Switch â”€â”€ */
 .s-toggle-group {
     display: flex;
     align-items: center;
@@ -233,7 +233,7 @@
 .s-toggle input:checked + .s-toggle-slider { background: var(--set-primary); }
 .s-toggle input:checked + .s-toggle-slider::before { transform: translateX(21px); }
 
-/* ── Buttons ── */
+/* â”€â”€ Buttons â”€â”€ */
 .s-btn {
     display: inline-flex;
     align-items: center;
@@ -267,7 +267,7 @@
 .s-btn-lg { padding: 13px 28px; font-size: .94rem; }
 .s-btn[disabled], .s-btn:disabled { opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-/* ── Image Preview ── */
+/* â”€â”€ Image Preview â”€â”€ */
 .s-img-preview-box {
     border: 2px dashed var(--set-border);
     border-radius: 12px;
@@ -288,7 +288,7 @@
     font-weight: 500;
 }
 
-/* ── Info Boxes ── */
+/* â”€â”€ Info Boxes â”€â”€ */
 .s-info-box {
     background: rgba(6,182,212,.07);
     border: 1px solid rgba(6,182,212,.2);
@@ -307,13 +307,13 @@
 .s-info-box.danger { background: rgba(239,68,68,.07); border-color: rgba(239,68,68,.2); }
 .s-info-box.danger i { color: var(--set-danger); }
 
-/* ── Status Badge ── */
+/* â”€â”€ Status Badge â”€â”€ */
 .s-status { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
 .s-status.active { background: rgba(34,197,94,.15); color: var(--set-success); }
 .s-status.inactive { background: rgba(239,68,68,.15); color: var(--set-danger); }
 .s-status .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 
-/* ── Code Block ── */
+/* â”€â”€ Code Block â”€â”€ */
 .s-code-block {
     background: #0a0f1a;
     border: 1px solid var(--set-border);
@@ -331,16 +331,16 @@
     margin-top: 12px;
 }
 
-/* ── Divider ── */
+/* â”€â”€ Divider â”€â”€ */
 .s-divider { border: none; border-top: 1px solid var(--set-border); margin: 20px 0; }
 
-/* ── Form Row ── */
+/* â”€â”€ Form Row â”€â”€ */
 .s-row { display: grid; gap: 20px; }
 .s-row-2 { grid-template-columns: 1fr 1fr; }
 .s-row-3 { grid-template-columns: 1fr 1fr 1fr; }
 @media(max-width:768px) { .s-row-2, .s-row-3 { grid-template-columns: 1fr; } }
 
-/* ── VAPID Key Box ── */
+/* â”€â”€ VAPID Key Box â”€â”€ */
 .vapid-key-display {
     background: #0a0f1a;
     border: 1px solid var(--set-border);
@@ -353,7 +353,7 @@
     line-height: 1.6;
 }
 
-/* ── Section subtitle ── */
+/* â”€â”€ Section subtitle â”€â”€ */
 .s-section-title {
     font-size: .78rem;
     font-weight: 600;
@@ -372,7 +372,7 @@
     background: var(--set-border);
 }
 
-/* ── Maintenance Banner ── */
+/* â”€â”€ Maintenance Banner â”€â”€ */
 .s-maintenance-active {
     background: linear-gradient(135deg, rgba(239,68,68,.1), rgba(239,68,68,.05));
     border: 1px solid rgba(239,68,68,.3);
@@ -387,24 +387,24 @@
 .s-maintenance-active h6 { color: #fca5a5; font-weight: 700; margin: 0 0 3px; }
 .s-maintenance-active p { color: var(--set-muted); font-size: .82rem; margin: 0; }
 
-/* ── Scrollbar ── */
+/* â”€â”€ Scrollbar â”€â”€ */
 .s-code-block::-webkit-scrollbar { width: 5px; height: 5px; }
 .s-code-block::-webkit-scrollbar-track { background: transparent; }
 .s-code-block::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
 
-/* ── Animations ── */
+/* â”€â”€ Animations â”€â”€ */
 @keyframes pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} }
 .online-dot { animation: pulse-dot 2s infinite; display:inline-block; }
 </style>
 
 <div class="settings-page">
-    {{-- ── Hero Header ── --}}
+    {{-- â”€â”€ Hero Header â”€â”€ --}}
     <div class="settings-hero">
         <h1><i class="fa fa-cogs"></i> System Settings Manager</h1>
-        <p>Manage website, SEO, logos, email SMTP, Telegram, and web push notifications — all in one place.</p>
+        <p>Manage website, SEO, logos, email SMTP, Telegram, and web push notifications â€” all in one place.</p>
     </div>
 
-    {{-- ── Tab Navigation ── --}}
+    {{-- â”€â”€ Tab Navigation â”€â”€ --}}
     <div class="settings-tabs-wrapper">
         <ul class="settings-nav" id="settingsNav">
             <li><button class="nav-tab active" data-tab="website"><i class="fa fa-globe"></i> Website</button></li>
@@ -417,12 +417,12 @@
         </ul>
     </div>
 
-    {{-- ── Tab Content ── --}}
+    {{-- â”€â”€ Tab Content â”€â”€ --}}
     <div class="settings-body">
 
-        {{-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        {{-- â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
              TAB 1 : WEBSITE SETTINGS
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ --}}
+        â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” --}}
         <div class="tab-pane active" id="tab-website">
             @if($settings->maintenance_mode)
             <div class="s-maintenance-active">
@@ -521,9 +521,9 @@
             </div>
         </div>
 
-        {{-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        {{-- â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
              TAB 2 : SEO SETTINGS
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ --}}
+        â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” --}}
         <div class="tab-pane" id="tab-seo">
             <div class="s-card">
                 <div class="s-card-header">
@@ -599,9 +599,9 @@
             </div>
         </div>
 
-        {{-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        {{-- â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
              TAB 3 : LOGO & FAVICON
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ --}}
+        â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” --}}
         <div class="tab-pane" id="tab-logos">
             <form action="{{ route('admin.settings.images-update') }}" method="POST" enctype="multipart/form-data">
                 @csrf @method('PUT')
@@ -619,11 +619,11 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('logoInput').click()">
-                                <img id="previewLogo" src="{{ $settings->logo ? asset('storage/' . $settings->logo) : 'https://placehold.co/200x80?text=Logo' }}" alt="Logo">
+                                <img id="previewLogo" src="{{ $settings->logo ? asset('uploads/' . $settings->logo) : 'https://placehold.co/200x80?text=Logo' }}" alt="Logo">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="logoInput" name="logo" accept="image/*" class="d-none" onchange="previewImg(this,'previewLogo')">
-                            <div class="mt-2" style="color:var(--set-muted);font-size:.75rem;">PNG, JPG, SVG, WebP — max 2MB</div>
+                            <div class="mt-2" style="color:var(--set-muted);font-size:.75rem;">PNG, JPG, SVG, WebP â€” max 2MB</div>
                         </div>
                     </div>
 
@@ -640,7 +640,7 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('logoDarkInput').click()">
-                                <img id="previewLogoDark" src="{{ $settings->logo_dark ? asset('storage/' . $settings->logo_dark) : 'https://placehold.co/200x80/1e293b/6366f1?text=Dark+Logo' }}" alt="Dark Logo">
+                                <img id="previewLogoDark" src="{{ $settings->logo_dark ? asset('uploads/' . $settings->logo_dark) : 'https://placehold.co/200x80/1e293b/6366f1?text=Dark+Logo' }}" alt="Dark Logo">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="logoDarkInput" name="logo_dark" accept="image/*" class="d-none" onchange="previewImg(this,'previewLogoDark')">
@@ -654,17 +654,17 @@
                                 <div class="s-card-icon orange"><i class="fa fa-star"></i></div>
                                 <div>
                                     <div class="s-card-title">Favicon</div>
-                                    <div class="s-card-subtitle">Browser tab icon (32×32)</div>
+                                    <div class="s-card-subtitle">Browser tab icon (32Ã—32)</div>
                                 </div>
                             </div>
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('faviconInput').click()">
-                                <img id="previewFavicon" src="{{ $settings->favicon ? asset('storage/' . $settings->favicon) : 'https://placehold.co/64x64?text=ICO' }}" alt="Favicon" style="max-height:80px;">
+                                <img id="previewFavicon" src="{{ $settings->favicon ? asset('uploads/' . $settings->favicon) : 'https://placehold.co/64x64?text=ICO' }}" alt="Favicon" style="max-height:80px;">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="faviconInput" name="favicon" accept="image/*" class="d-none" onchange="previewImg(this,'previewFavicon')">
-                            <div class="mt-2" style="color:var(--set-muted);font-size:.75rem;">ICO, PNG, JPG — max 512KB</div>
+                            <div class="mt-2" style="color:var(--set-muted);font-size:.75rem;">ICO, PNG, JPG â€” max 512KB</div>
                         </div>
                     </div>
 
@@ -675,13 +675,13 @@
                                 <div class="s-card-icon teal"><i class="fa fa-apple"></i></div>
                                 <div>
                                     <div class="s-card-title">Apple Touch Icon</div>
-                                    <div class="s-card-subtitle">iOS home screen icon (180×180)</div>
+                                    <div class="s-card-subtitle">iOS home screen icon (180Ã—180)</div>
                                 </div>
                             </div>
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('appleTouchInput').click()">
-                                <img id="previewAppleTouch" src="{{ $settings->apple_touch_icon ? asset('storage/' . $settings->apple_touch_icon) : 'https://placehold.co/180x180?text=Apple' }}" alt="Apple Touch Icon" style="max-height:80px;">
+                                <img id="previewAppleTouch" src="{{ $settings->apple_touch_icon ? asset('uploads/' . $settings->apple_touch_icon) : 'https://placehold.co/180x180?text=Apple' }}" alt="Apple Touch Icon" style="max-height:80px;">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="appleTouchInput" name="apple_touch_icon" accept="image/*" class="d-none" onchange="previewImg(this,'previewAppleTouch')">
@@ -695,13 +695,13 @@
                                 <div class="s-card-icon green"><i class="fa fa-share-square-o"></i></div>
                                 <div>
                                     <div class="s-card-title">Open Graph Image</div>
-                                    <div class="s-card-subtitle">Social share preview (1200×630)</div>
+                                    <div class="s-card-subtitle">Social share preview (1200Ã—630)</div>
                                 </div>
                             </div>
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('ogImageInput').click()">
-                                <img id="previewOgImage" src="{{ $settings->og_image ? asset('storage/' . $settings->og_image) : 'https://placehold.co/1200x630/1e293b/fff?text=OG+Image' }}" alt="OG Image">
+                                <img id="previewOgImage" src="{{ $settings->og_image ? asset('uploads/' . $settings->og_image) : 'https://placehold.co/1200x630/1e293b/fff?text=OG+Image' }}" alt="OG Image">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="ogImageInput" name="og_image" accept="image/*" class="d-none" onchange="previewImg(this,'previewOgImage')">
@@ -721,7 +721,7 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('mainImageInput').click()">
-                                <img id="previewMainImage" src="{{ $settings->image ? asset('storage/' . $settings->image) : 'https://placehold.co/800x400?text=Banner' }}" alt="Main Image">
+                                <img id="previewMainImage" src="{{ $settings->image ? asset('uploads/' . $settings->image) : 'https://placehold.co/800x400?text=Banner' }}" alt="Main Image">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="mainImageInput" name="main_image" accept="image/*" class="d-none" onchange="previewImg(this,'previewMainImage')">
@@ -735,9 +735,9 @@
             </form>
         </div>
 
-        {{-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        {{-- â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
              TAB 4 : SOCIAL MEDIA
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ --}}
+        â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” --}}
         <div class="tab-pane" id="tab-social">
             <div class="s-card">
                 <div class="s-card-header">
@@ -785,9 +785,9 @@
             </div>
         </div>
 
-        {{-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        {{-- â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
              TAB 5 : EMAIL SMTP
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ --}}
+        â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” --}}
         <div class="tab-pane" id="tab-smtp">
             <div class="s-row s-row-2">
                 <div class="s-card" style="grid-column: 1 / -1;">
@@ -904,9 +904,9 @@
             </div>
         </div>
 
-        {{-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        {{-- â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
              TAB 6 : TELEGRAM
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ --}}
+        â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” --}}
         <div class="tab-pane" id="tab-telegram">
             <div class="s-row s-row-2">
 
@@ -1102,9 +1102,9 @@
             </div>
         </div>
 
-        {{-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        {{-- â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
              TAB 7 : WEB PUSH
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ --}}
+        â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â” --}}
         <div class="tab-pane" id="tab-webpush">
             <div class="s-row s-row-2">
                 <div class="s-card">
@@ -1185,11 +1185,11 @@
                                 <div class="s-section-title"><i class="fa fa-check-circle text-success"></i> Generated Keys</div>
                                 <div class="s-form-group">
                                     <label class="s-label">Public Key</label>
-                                    <div class="vapid-key-display" id="genPublic">—</div>
+                                    <div class="vapid-key-display" id="genPublic">â€”</div>
                                 </div>
                                 <div class="s-form-group">
                                     <label class="s-label">Private Key</label>
-                                    <div class="vapid-key-display" id="genPrivate">—</div>
+                                    <div class="vapid-key-display" id="genPrivate">â€”</div>
                                 </div>
                                 <button type="button" class="s-btn s-btn-info s-btn-sm" onclick="copyVapidToForm()">
                                     <i class="fa fa-clipboard"></i> Copy to Form
@@ -1238,11 +1238,11 @@
     </div>{{-- end settings-body --}}
 </div>{{-- end settings-page --}}
 
-{{-- ═══════════════════════════════════════════════════════════════
+{{-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      JAVASCRIPT
-═══════════════════════════════════════════════════════════════ --}}
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
 <script>
-// ── Tab Switching ──
+// â”€â”€ Tab Switching â”€â”€
 document.querySelectorAll('.nav-tab').forEach(function(btn) {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
@@ -1262,7 +1262,7 @@ document.querySelectorAll('.nav-tab').forEach(function(btn) {
     }
 })();
 
-// ── Image Preview ──
+// â”€â”€ Image Preview â”€â”€
 function previewImg(input, previewId) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
@@ -1273,7 +1273,7 @@ function previewImg(input, previewId) {
     }
 }
 
-// ── Password Toggle ──
+// â”€â”€ Password Toggle â”€â”€
 function togglePassword(inputId, btn) {
     var input = document.getElementById(inputId);
     var icon  = btn.querySelector('i');
@@ -1286,7 +1286,7 @@ function togglePassword(inputId, btn) {
     }
 }
 
-// ── VAPID Key Generation ──
+// â”€â”€ VAPID Key Generation â”€â”€
 function generateVapidKeys() {
     var btn = event.target;
     btn.disabled = true;
@@ -1320,3 +1320,4 @@ function copyVapidToForm() {
 </script>
 
 @include('admin.inc.footer')
+

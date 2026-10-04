@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('content')
     <style>
         .single-post table {
@@ -383,9 +383,9 @@
             </div>
             @php
                 if (Storage::disk('public')->exists($post->image)) {
-                    $post_image = asset('storage/' . $post->image);
+                    $post_image = asset('uploads/' . $post->image);
                 } else {
-                    $post_image = asset('storage/post_images/' . $post->image);
+                    $post_image = asset('uploads/post_images/' . $post->image);
                 }
             @endphp
             <div class="post-image-container">
@@ -504,3 +504,4 @@
     </style>
     </div>
 @endsection
+

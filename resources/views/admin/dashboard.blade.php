@@ -1,4 +1,4 @@
-@include('admin.inc.header')
+﻿@include('admin.inc.header')
 
 @php
     $posts = $posts ?? 0;
@@ -318,7 +318,7 @@
                     </span>
                 </div>
                 <h1 class="dash-welcome-title">
-                    Welcome back, {{ Auth::user()->name ?? 'Administrator' }}! 👋
+                    Welcome back, {{ Auth::user()->name ?? 'Administrator' }}! ðŸ‘‹
                 </h1>
                 <p class="dash-welcome-sub">
                     Here is an overview of your news portal's publishing operations, audience metrics, and recent editorial activity.
@@ -620,9 +620,9 @@
                                     $imgSrc = null;
                                     if (!empty($post->image)) {
                                         if (str_starts_with($post->image, 'post_images/')) {
-                                            $imgSrc = asset('storage/' . $post->image);
+                                            $imgSrc = asset('uploads/' . $post->image);
                                         } else {
-                                            $imgSrc = asset('storage/post_images/' . $post->image);
+                                            $imgSrc = asset('uploads/post_images/' . $post->image);
                                         }
                                     }
                                 @endphp
@@ -943,3 +943,4 @@
     }
 })();
 </script>
+

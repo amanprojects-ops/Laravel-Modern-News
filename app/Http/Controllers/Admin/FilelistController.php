@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\UploadHelper;
 use App\Models\Setting;
 use App\Models\Filelist;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class FilelistController
 {
@@ -31,15 +31,21 @@ class FilelistController
      */
     public function store(Request $request)
     {
-        $settings = Setting::first();
-        $file = $request->file('file');
-        $filename = bin2hex(random_bytes(8)) . '.' . $file->getClientOriginalExtension();
-        $file->storeAs('attachments', $filename, 'public');
+        $request->validate([
+            'file'  => 'required|file|max:10240', // 10MB max
+            'title' => 'required|string|max:255',
+        ]);
 
-        $filelist = new Filelist();
+        $settings = Setting::first();
+        $path     = UploadHelper::upload($request->file('file'), 'attachments');
+
+        // Extract just the filename from the path
+        $filename = basename($path);
+
+        $filelist             = new Filelist();
         $filelist->file_title = $request->input('title');
-        $filelist->file_name = $filename;
-        $filelist->slug = $settings->url . '/storage/attachments/' . $filename;
+        $filelist->file_name  = $filename;
+        $filelist->slug       = ($settings->url ?? url('/')) . '/uploads/attachments/' . $filename;
         $filelist->save();
 
         return redirect()->route('admin.attachements.view')->with('success', 'File uploaded successfully');
@@ -50,14 +56,8 @@ class FilelistController
      */
     public function show(string $id)
     {
-        dd("id is" . $id);
-        // $file = Filelist::find($id);
-
-        // if (!$file) {
-        //     return redirect()->route('admin.attachements.view')->with('error', 'File not found');
-        // }
-
-        // return view('admin.attachement.show', compact('file'));
+        $file = Filelist::findOrFail($id);
+        return view('admin.attachement.show', compact('file'));
     }
 
     /**
@@ -82,10 +82,11 @@ class FilelistController
     public function destroy(string $id)
     {
         $file = Filelist::find($id);
-        if ($file && Storage::disk('public')->exists('attachments/' . $file->file_name)) {
-            Storage::disk('public')->delete('attachments/' . $file->file_name);
+        if ($file) {
+            UploadHelper::delete('uploads/attachments/' . $file->file_name);
             $file->delete();
             return redirect()->route('admin.attachements.view')->with('success', 'File deleted successfully');
         }
+        return redirect()->route('admin.attachements.view')->with('error', 'File not found');
     }
 }

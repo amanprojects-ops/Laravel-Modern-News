@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\UploadHelper;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 class AdminPostController
 {
@@ -42,32 +42,29 @@ class AdminPostController
             return redirect()->back()->withErrors(['csrf' => 'Invalid request try again.']);
         }
         $request->validate([
-            'post_title' => 'required|string|max:60',
+            'post_title'        => 'required|string|max:60',
             'short_description' => 'required|string|max:160',
-            'post_keywords' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category' => 'required|exists:categories,id',
-            'featureImage' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'post_keywords'     => 'required|string|max:255',
+            'content'           => 'required|string',
+            'category'          => 'required|exists:categories,id',
+            'featureImage'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
         $post = new Post();
-        $post->title = $request->input('post_title');
+        $post->title             = $request->input('post_title');
         $post->short_description = $request->input('short_description');
-        $post->post_keywords = $request->input('post_keywords');
-        $post->description = $request->input('content');
-        $post->category_id = $request->input('category');
+        $post->post_keywords     = $request->input('post_keywords');
+        $post->description       = $request->input('content');
+        $post->category_id       = $request->input('category');
 
         if ($request->hasFile('featureImage')) {
-            // Store the uploaded image and get the path
-            $file_name = bin2hex(random_bytes(8)) . '.' . $request->file('featureImage')->getClientOriginalExtension();
-            // Store the image in the 'public/post_images' directory
-            $post->image = $request->file('featureImage')->storeAs('post_images', $file_name, 'public');
+            $post->image = UploadHelper::upload($request->file('featureImage'), 'post_images');
         }
 
-        // $post->created_by = auth()->id();
-        $post->created_by = 1; // For testing purposes, replace with actual user ID in production
-        $post->status = $request->input('status', 0); // Default to 'draft' if not provided
+        $post->created_by = auth()->id() ?? 1;
+        $post->status     = $request->input('status', 0);
         $post->save();
+
         return redirect()->route('admin.posts.view', $post);
     }
 
@@ -98,36 +95,36 @@ class AdminPostController
             return redirect()->back()->withErrors(['csrf' => 'Invalid request try again.']);
         }
         $request->validate([
-            'title' => 'required|string|max:60',
+            'title'             => 'required|string|max:60',
             'short_description' => 'required|string|max:160',
-            'keywords' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category' => 'required|exists:categories,id',
-            'feature_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'keywords'          => 'required|string|max:255',
+            'content'           => 'required|string',
+            'category'          => 'required|exists:categories,id',
+            'feature_image'     => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
+
         try {
             $post = Post::findOrFail($id);
-            $post->title = $request->input('title');
+            $post->title             = $request->input('title');
             $post->short_description = $request->input('short_description');
-            $post->post_keywords = $request->input('keywords');
-            $post->description = $request->input('content');
-            $post->category_id = $request->input('category');
+            $post->post_keywords     = $request->input('keywords');
+            $post->description       = $request->input('content');
+            $post->category_id       = $request->input('category');
+
             if ($request->hasFile('feature_image')) {
-                // Delete old image if exists
-                if ($post->image && Storage::disk('public')->exists("post_images/{$post->image}")) {
-                    Storage::disk('public')->delete("post_images/{$post->image}");
-                }
-                // Store the new uploaded image and get the path
-                $file_name = bin2hex(random_bytes(8)) . '.' . $request->file('feature_image')->getClientOriginalExtension();
-                $request->file('feature_image')->storeAs('post_images', $file_name, 'public');
-                $post->image = $file_name;
+                // Delete old image and upload new one
+                $post->image = UploadHelper::upload(
+                    $request->file('feature_image'),
+                    'post_images',
+                    $post->image  // old path for deletion
+                );
             }
-            $post->status = $request->input('status', 0); // Default to 'draft' if not provided
-            // $post->created_by = auth()->id();
-            $post->created_by = 1; // For testing purposes, replace with actual user ID in production
+
+            $post->status     = $request->input('status', 0);
+            $post->created_by = auth()->id() ?? 1;
             $post->updated_at = now();
-            // Save the post
             $post->save();
+
             return redirect()->back()->with('success', 'Post updated successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error updating post: ' . $e->getMessage());
@@ -140,6 +137,7 @@ class AdminPostController
     public function destroy(string $id)
     {
         $post = Post::findOrFail($id);
+        UploadHelper::delete($post->image);
         $post->delete();
         return redirect()->route('admin.posts.view')->with('success', 'Post deleted successfully.');
     }
@@ -154,7 +152,6 @@ class AdminPostController
         }
         $post = Post::findOrFail($id);
         $post->status = $request->input('status');
-        // Send notification
         $post->save();
         return redirect()->back()->with('success', 'Post updated successfully.');
     }
@@ -169,7 +166,7 @@ class AdminPostController
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the temp post preview.
      */
     public function tempPost(string $id)
     {
