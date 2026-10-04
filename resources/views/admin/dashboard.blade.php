@@ -1,5 +1,307 @@
 @include('admin.inc.header')
 
+@php
+    $posts = $posts ?? 0;
+    $active = $active ?? 0;
+    $drafts = $drafts ?? 0;
+    $rejected = $rejected ?? 0;
+    $categoriesCount = $categoriesCount ?? 0;
+    $usersCount = $usersCount ?? 0;
+    $filesCount = $filesCount ?? 0;
+    $recentPosts = $recentPosts ?? [];
+    $topCategories = $topCategories ?? [];
+    $topAuthors = $topAuthors ?? [];
+    $monthLabels = !empty($monthLabels) ? $monthLabels : ['Apr 2024', 'Aug 2024', 'Sep 2024', 'Nov 2024', 'Jan 2025', 'Jul 2025'];
+    $monthCounts = !empty($monthCounts) ? $monthCounts : [90, 21, 5, 1, 22, 1];
+@endphp
+
+<!-- Inline Style Backup to Guarantee Immediate Rendering Across Browser Caches -->
+<style>
+:root {
+    --dash-primary: #4f46e5;
+    --dash-success: #10b981;
+    --dash-warning: #f59e0b;
+    --dash-danger: #ef4444;
+    --dash-info: #06b6d4;
+    --dash-radius: 14px;
+    --dash-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    --dash-shadow-hover: 0 12px 28px -4px rgba(0, 0, 0, 0.1);
+}
+.dash-welcome-banner {
+    position: relative;
+    background: linear-gradient(135deg, #1e1b4b 0%, #1e293b 50%, #0f172a 100%);
+    border-radius: var(--dash-radius);
+    padding: 28px 32px;
+    margin-bottom: 25px;
+    color: #ffffff;
+    box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.35);
+    overflow: hidden;
+}
+.dash-welcome-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+.dash-welcome-sub {
+    color: #cbd5e1;
+    font-size: 14px;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+.dash-status-beacon {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #f1f5f9;
+}
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+.dash-btn-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    color: #ffffff !important;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+}
+.dash-btn-glass {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+}
+.dash-kpi-card {
+    background: #ffffff;
+    border-radius: var(--dash-radius);
+    padding: 22px;
+    box-shadow: var(--dash-shadow);
+    border: 1px solid #edf2f7;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    height: 100%;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.dash-kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--dash-shadow-hover);
+}
+.dash-kpi-primary { border-top: 3px solid #4f46e5; }
+.dash-kpi-success { border-top: 3px solid #10b981; }
+.dash-kpi-warning { border-top: 3px solid #f59e0b; }
+.dash-kpi-danger { border-top: 3px solid #ef4444; }
+.dash-kpi-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+.dash-kpi-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+.dash-kpi-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.1;
+    margin-bottom: 0;
+}
+.dash-kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.dash-icon-primary { background: #e0e7ff; color: #4338ca; }
+.dash-icon-success { background: #d1fae5; color: #047857; }
+.dash-icon-warning { background: #fef3c7; color: #b45309; }
+.dash-icon-danger { background: #fee2e2; color: #b91c1c; }
+.dash-icon-cyan { background: #cffafe; color: #0e7490; }
+.dash-icon-purple { background: #ede9fe; color: #6d28d9; }
+.dash-icon-pink { background: #fce7f3; color: #be185d; }
+.dash-kpi-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 12px;
+}
+.dash-mini-stat {
+    background: #ffffff;
+    border-radius: var(--dash-radius);
+    padding: 16px 20px;
+    box-shadow: var(--dash-shadow);
+    border: 1px solid #edf2f7;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.dash-mini-stat-info h4 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+.dash-mini-stat-info p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+}
+.dash-card {
+    background: #ffffff;
+    border-radius: var(--dash-radius);
+    box-shadow: var(--dash-shadow);
+    border: 1px solid #edf2f7;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+.dash-card-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+}
+.dash-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+.dash-card-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin: 2px 0 0 0;
+}
+.dash-card-body {
+    padding: 24px;
+}
+.dash-card-footer {
+    padding: 14px 24px;
+    border-top: 1px solid #f1f5f9;
+    background: #f8fafc;
+    text-align: center;
+}
+.dash-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+}
+.dash-quick-item {
+    background: #ffffff;
+    border: 1px solid #edf2f7;
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    color: #1e293b !important;
+    text-decoration: none !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.dash-quick-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    border-color: #c7d2fe;
+}
+.dash-quick-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+.dash-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.dash-badge-success { background: #dcfce7; color: #15803d; }
+.dash-badge-warning { background: #fef3c7; color: #b45309; }
+.dash-badge-danger { background: #fee2e2; color: #b91c1c; }
+.dash-avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+.dash-cat-bar {
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 6px;
+    width: 100%;
+}
+.dash-cat-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #4f46e5, #818cf8);
+    border-radius: 10px;
+}
+.dash-cat-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: #4f46e5;
+    background: #eef2ff;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+</style>
+
 <!-- Dashboard Main Content Container -->
 <div class="container-fluid" style="padding: 24px 20px;">
 
@@ -11,7 +313,7 @@
                     <span class="dash-status-beacon">
                         <span class="pulse-dot"></span> News Portal Active
                     </span>
-                    <span class="badge" style="background: rgba(255,255,255,0.12); color: #e2e8f0; font-size: 11px; padding: 6px 12px; border-radius: 20px;">
+                    <span class="badge ml-2" style="background: rgba(255,255,255,0.12); color: #e2e8f0; font-size: 11px; padding: 6px 12px; border-radius: 20px;">
                         <i class="fa fa-calendar-o mr-1"></i> {{ now()->format('l, d M Y') }}
                     </span>
                 </div>
@@ -23,7 +325,7 @@
                 </p>
             </div>
             <div class="col-lg-4 col-md-12 text-lg-right">
-                <div class="dash-hero-actions justify-content-lg-end">
+                <div class="d-flex gap-2 justify-content-lg-end" style="gap: 10px;">
                     <a href="{{ route('admin.posts.create') }}" class="dash-btn-primary">
                         <i class="fa fa-plus-circle"></i> Create New Article
                     </a>
@@ -52,10 +354,10 @@
                     </div>
                 </div>
                 <div class="dash-kpi-bottom">
-                    <span class="dash-kpi-trend dash-trend-neutral">
-                        <i class="fa fa-database"></i> All content in database
+                    <span style="color: #64748b; font-weight: 500;">
+                        <i class="fa fa-database mr-1"></i> Content in database
                     </span>
-                    <a href="{{ route('admin.posts.view') }}" class="dash-kpi-link">View all &rarr;</a>
+                    <a href="{{ route('admin.posts.view') }}" style="color: #4f46e5; font-weight: 600;">View all &rarr;</a>
                 </div>
             </div>
         </div>
@@ -75,10 +377,10 @@
                     </div>
                 </div>
                 <div class="dash-kpi-bottom">
-                    <span class="dash-kpi-trend dash-trend-up">
-                        <i class="fa fa-arrow-up"></i> {{ $posts > 0 ? round(($active / $posts) * 100, 1) : 0 }}% publication rate
+                    <span style="color: #10b981; font-weight: 600;">
+                        <i class="fa fa-arrow-up mr-1"></i> {{ $posts > 0 ? round(($active / $posts) * 100, 1) : 0 }}% publication rate
                     </span>
-                    <a href="{{ route('admin.posts.view') }}" class="dash-kpi-link">Manage &rarr;</a>
+                    <a href="{{ route('admin.posts.view') }}" style="color: #4f46e5; font-weight: 600;">Manage &rarr;</a>
                 </div>
             </div>
         </div>
@@ -98,10 +400,10 @@
                     </div>
                 </div>
                 <div class="dash-kpi-bottom">
-                    <span class="dash-kpi-trend dash-trend-neutral">
-                        <i class="fa fa-clock-o"></i> {{ $posts > 0 ? round(($drafts / $posts) * 100, 1) : 0 }}% awaiting review
+                    <span style="color: #64748b; font-weight: 500;">
+                        <i class="fa fa-clock-o mr-1"></i> {{ $posts > 0 ? round(($drafts / $posts) * 100, 1) : 0 }}% in review
                     </span>
-                    <a href="{{ route('admin.posts.view') }}" class="dash-kpi-link">Review &rarr;</a>
+                    <a href="{{ route('admin.posts.view') }}" style="color: #4f46e5; font-weight: 600;">Review &rarr;</a>
                 </div>
             </div>
         </div>
@@ -121,10 +423,10 @@
                     </div>
                 </div>
                 <div class="dash-kpi-bottom">
-                    <span class="dash-kpi-trend dash-trend-down">
-                        <i class="fa fa-exclamation-circle"></i> Requires revision
+                    <span style="color: #ef4444; font-weight: 600;">
+                        <i class="fa fa-exclamation-circle mr-1"></i> Requires revision
                     </span>
-                    <a href="{{ route('admin.posts.view') }}" class="dash-kpi-link">Check &rarr;</a>
+                    <a href="{{ route('admin.posts.view') }}" style="color: #4f46e5; font-weight: 600;">Check &rarr;</a>
                 </div>
             </div>
         </div>
@@ -179,48 +481,48 @@
                 <p class="dash-card-sub">Fast shortcuts for everyday editorial and management workflows</p>
             </div>
         </div>
-        <div class="dash-card-body" style="padding-bottom: 12px;">
+        <div class="dash-card-body" style="padding-bottom: 16px;">
             <div class="dash-quick-grid">
                 <a href="{{ route('admin.posts.create') }}" class="dash-quick-item">
                     <div class="dash-quick-icon" style="background: #e0e7ff; color: #4338ca;">
                         <i class="fa fa-pencil"></i>
                     </div>
-                    <span class="dash-quick-title">New Article</span>
+                    <span style="font-size: 12px; font-weight: 600;">New Article</span>
                 </a>
 
                 <a href="{{ route('admin.posts.view') }}" class="dash-quick-item">
                     <div class="dash-quick-icon" style="background: #dcfce7; color: #15803d;">
                         <i class="fa fa-list-alt"></i>
                     </div>
-                    <span class="dash-quick-title">All Articles</span>
+                    <span style="font-size: 12px; font-weight: 600;">All Articles</span>
                 </a>
 
                 <a href="{{ route('admin.categories.create') }}" class="dash-quick-item">
                     <div class="dash-quick-icon" style="background: #cffafe; color: #0e7490;">
                         <i class="fa fa-tags"></i>
                     </div>
-                    <span class="dash-quick-title">Add Category</span>
+                    <span style="font-size: 12px; font-weight: 600;">Add Category</span>
                 </a>
 
                 <a href="{{ route('admin.attachements.create') }}" class="dash-quick-item">
                     <div class="dash-quick-icon" style="background: #fce7f3; color: #be185d;">
                         <i class="fa fa-upload"></i>
                     </div>
-                    <span class="dash-quick-title">Upload Media</span>
+                    <span style="font-size: 12px; font-weight: 600;">Upload Media</span>
                 </a>
 
                 <a href="{{ route('admin.users.create') }}" class="dash-quick-item">
                     <div class="dash-quick-icon" style="background: #ede9fe; color: #6d28d9;">
                         <i class="fa fa-user-plus"></i>
                     </div>
-                    <span class="dash-quick-title">Add Author</span>
+                    <span style="font-size: 12px; font-weight: 600;">Add Author</span>
                 </a>
 
                 <a href="{{ route('admin.settings') }}" class="dash-quick-item">
                     <div class="dash-quick-icon" style="background: #f1f5f9; color: #475569;">
                         <i class="fa fa-cogs"></i>
                     </div>
-                    <span class="dash-quick-title">Site Settings</span>
+                    <span style="font-size: 12px; font-weight: 600;">Site Settings</span>
                 </a>
             </div>
         </div>
@@ -234,7 +536,7 @@
                 <div class="dash-card-header">
                     <div>
                         <h3 class="dash-card-title">
-                            <i class="fa fa-line-chart"></i> Publishing Activity Trend
+                            <i class="fa fa-line-chart" style="color: #4f46e5;"></i> Publishing Activity Trend
                         </h3>
                         <p class="dash-card-sub">Content output across active monthly periods</p>
                     </div>
@@ -243,7 +545,7 @@
                     </span>
                 </div>
                 <div class="dash-card-body">
-                    <div class="dash-chart-container" style="height: 280px;">
+                    <div style="position: relative; width: 100%; height: 280px;">
                         <canvas id="publishTrendChart"></canvas>
                     </div>
                 </div>
@@ -256,27 +558,27 @@
                 <div class="dash-card-header">
                     <div>
                         <h3 class="dash-card-title">
-                            <i class="fa fa-pie-chart"></i> Status Distribution
+                            <i class="fa fa-pie-chart" style="color: #10b981;"></i> Status Distribution
                         </h3>
                         <p class="dash-card-sub">Current distribution of articles</p>
                     </div>
                 </div>
                 <div class="dash-card-body d-flex flex-column justify-content-center">
-                    <div class="dash-chart-container" style="height: 200px; position: relative;">
+                    <div style="position: relative; width: 100%; height: 200px;">
                         <canvas id="statusBreakdownChart"></canvas>
                     </div>
-                    <div class="dash-chart-legend mt-3">
-                        <div class="dash-legend-item">
-                            <span class="dash-legend-box" style="background: #10b981;"></span>
-                            <span>Published ({{ $active }})</span>
+                    <div class="d-flex justify-content-center flex-wrap mt-3" style="gap: 16px; font-size: 12px;">
+                        <div class="d-flex align-items-center">
+                            <span style="width: 10px; height: 10px; border-radius: 3px; background: #10b981; display: inline-block; margin-right: 6px;"></span>
+                            <span style="color: #64748b; font-weight: 500;">Published ({{ $active }})</span>
                         </div>
-                        <div class="dash-legend-item">
-                            <span class="dash-legend-box" style="background: #f59e0b;"></span>
-                            <span>Drafts ({{ $drafts }})</span>
+                        <div class="d-flex align-items-center">
+                            <span style="width: 10px; height: 10px; border-radius: 3px; background: #f59e0b; display: inline-block; margin-right: 6px;"></span>
+                            <span style="color: #64748b; font-weight: 500;">Drafts ({{ $drafts }})</span>
                         </div>
-                        <div class="dash-legend-item">
-                            <span class="dash-legend-box" style="background: #ef4444;"></span>
-                            <span>Rejected ({{ $rejected }})</span>
+                        <div class="d-flex align-items-center">
+                            <span style="width: 10px; height: 10px; border-radius: 3px; background: #ef4444; display: inline-block; margin-right: 6px;"></span>
+                            <span style="color: #64748b; font-weight: 500;">Rejected ({{ $rejected }})</span>
                         </div>
                     </div>
                 </div>
@@ -292,7 +594,7 @@
                 <div class="dash-card-header">
                     <div>
                         <h3 class="dash-card-title">
-                            <i class="fa fa-clock-o"></i> Recent Articles
+                            <i class="fa fa-clock-o" style="color: #4f46e5;"></i> Recent Articles
                         </h3>
                         <p class="dash-card-sub">Latest news posts updated or created on your portal</p>
                     </div>
@@ -300,16 +602,16 @@
                         <i class="fa fa-plus"></i> New Article
                     </a>
                 </div>
-                <div class="dash-table-wrap">
-                    <table class="table dash-table">
-                        <thead>
+                <div class="table-responsive">
+                    <table class="table" style="margin-bottom: 0;">
+                        <thead style="background: #f8fafc;">
                             <tr>
-                                <th>Article</th>
-                                <th>Category</th>
-                                <th>Author</th>
-                                <th>Status</th>
-                                <th>Updated</th>
-                                <th class="text-right">Action</th>
+                                <th style="border-top: none; font-size: 11px; text-transform: uppercase; color: #475569; font-weight: 700;">Article</th>
+                                <th style="border-top: none; font-size: 11px; text-transform: uppercase; color: #475569; font-weight: 700;">Category</th>
+                                <th style="border-top: none; font-size: 11px; text-transform: uppercase; color: #475569; font-weight: 700;">Author</th>
+                                <th style="border-top: none; font-size: 11px; text-transform: uppercase; color: #475569; font-weight: 700;">Status</th>
+                                <th style="border-top: none; font-size: 11px; text-transform: uppercase; color: #475569; font-weight: 700;">Updated</th>
+                                <th style="border-top: none; font-size: 11px; text-transform: uppercase; color: #475569; font-weight: 700;" class="text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -326,62 +628,62 @@
                                 @endphp
                                 <tr>
                                     <td>
-                                        <div class="dash-article-cell">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
                                             @if($imgSrc)
                                                 <img src="{{ $imgSrc }}"
                                                      alt="{{ $post->title }}"
-                                                     class="dash-article-thumb"
+                                                     style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;"
                                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                <div class="dash-article-thumb-fallback" style="display: none;">
+                                                <div style="display: none; width: 44px; height: 44px; border-radius: 8px; background: #e2e8f0; align-items: center; justify-content: center; color: #94a3b8; font-size: 18px;">
                                                     <i class="fa fa-file-text-o"></i>
                                                 </div>
                                             @else
-                                                <div class="dash-article-thumb-fallback">
+                                                <div style="width: 44px; height: 44px; border-radius: 8px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 18px;">
                                                     <i class="fa fa-file-text-o"></i>
                                                 </div>
                                             @endif
-                                            <div class="dash-article-info">
-                                                <a href="{{ route('admin.posts.edit', $post->id) }}" class="dash-article-title" title="{{ $post->title }}">
+                                            <div>
+                                                <a href="{{ route('admin.posts.edit', $post->id) }}" style="font-weight: 600; color: #0f172a; font-size: 13px; line-height: 1.4; display: block;" title="{{ $post->title }}">
                                                     {{ Str::limit($post->title, 45) }}
                                                 </a>
-                                                <div class="dash-article-meta">
-                                                    <span><i class="fa fa-hashtag"></i> ID: #{{ $post->id }}</span>
-                                                </div>
+                                                <span style="font-size: 11px; color: #64748b;">
+                                                    <i class="fa fa-hashtag"></i> ID: #{{ $post->id }}
+                                                </span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <span class="badge badge-light" style="font-weight: 600; color: #4338ca; background: #e0e7ff; border-radius: 6px; padding: 4px 8px;">
+                                    <td style="vertical-align: middle;">
+                                        <span class="badge" style="font-weight: 600; color: #4338ca; background: #e0e7ff; border-radius: 6px; padding: 4px 8px;">
                                             {{ $post->category_name ?? 'General' }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td style="vertical-align: middle;">
                                         <span style="font-weight: 500; color: #334155; font-size: 12px;">
                                             {{ $post->writer_name ?? 'Editor' }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td style="vertical-align: middle;">
                                         @if ($post->status == 1)
                                             <span class="dash-badge dash-badge-success">
-                                                <span class="dash-badge-dot"></span> Published
+                                                <span style="width: 6px; height: 6px; border-radius: 50%; background: #16a34a; display: inline-block;"></span> Published
                                             </span>
                                         @elseif ($post->status == 0)
                                             <span class="dash-badge dash-badge-warning">
-                                                <span class="dash-badge-dot"></span> Draft
+                                                <span style="width: 6px; height: 6px; border-radius: 50%; background: #d97706; display: inline-block;"></span> Draft
                                             </span>
                                         @else
                                             <span class="dash-badge dash-badge-danger">
-                                                <span class="dash-badge-dot"></span> Rejected
+                                                <span style="width: 6px; height: 6px; border-radius: 50%; background: #dc2626; display: inline-block;"></span> Rejected
                                             </span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td style="vertical-align: middle;">
                                         <span style="color: #64748b; font-size: 11px;">
                                             {{ \Carbon\Carbon::parse($post->updated_at ?? $post->created_at)->diffForHumans() }}
                                         </span>
                                     </td>
-                                    <td class="text-right">
-                                        <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-sm btn-light" style="padding: 3px 8px; border-radius: 6px; font-size: 11px;" title="Edit Article">
+                                    <td style="vertical-align: middle;" class="text-right">
+                                        <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-sm btn-light" style="padding: 4px 8px; border-radius: 6px; font-size: 11px;" title="Edit Article">
                                             <i class="fa fa-pencil text-primary"></i>
                                         </a>
                                     </td>
@@ -425,10 +727,10 @@
                         @php
                             $catPercentage = $posts > 0 ? round(($cat->total_posts / $posts) * 100) : 0;
                         @endphp
-                        <div class="dash-cat-item">
-                            <div style="flex-grow: 1; padding-right: 15px;">
+                        <div style="padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+                            <div>
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="dash-cat-name">{{ $cat->name }}</span>
+                                    <span style="font-size: 13px; font-weight: 600; color: #1e293b;">{{ $cat->name }}</span>
                                     <span class="dash-cat-count">{{ $cat->total_posts }} articles</span>
                                 </div>
                                 <div class="dash-cat-bar">
@@ -462,13 +764,13 @@
                 </div>
                 <div class="dash-card-body py-2">
                     @forelse($topAuthors as $author)
-                        <div class="dash-author-item">
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
                             <div class="dash-avatar-circle">
                                 {{ strtoupper(substr($author->name ?? 'A', 0, 1)) }}
                             </div>
-                            <div class="dash-author-info">
-                                <h5 class="dash-author-name">{{ $author->name }}</h5>
-                                <p class="dash-author-role">{{ $author->email }}</p>
+                            <div style="flex-grow: 1; min-width: 0;">
+                                <h5 style="font-size: 13px; font-weight: 600; color: #0f172a; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $author->name }}</h5>
+                                <p style="font-size: 11px; color: #64748b; margin: 0;">{{ $author->email }}</p>
                             </div>
                             <div>
                                 <span class="badge badge-light" style="font-size: 11px; padding: 4px 8px; border-radius: 10px; background: #f1f5f9; color: #334155;">
@@ -497,22 +799,22 @@
                         <p class="dash-card-sub">Environment & framework status</p>
                     </div>
                 </div>
-                <div class="dash-card-body py-2">
-                    <div class="dash-system-item">
-                        <span class="dash-system-label"><i class="fa fa-code"></i> Framework</span>
-                        <span class="dash-system-value">Laravel v{{ app()->version() }}</span>
+                <div class="dash-card-body py-2" style="font-size: 12px;">
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+                        <span style="color: #64748b;"><i class="fa fa-code mr-1"></i> Framework</span>
+                        <span style="color: #0f172a; font-weight: 600;">Laravel v{{ app()->version() }}</span>
                     </div>
-                    <div class="dash-system-item">
-                        <span class="dash-system-label"><i class="fa fa-cogs"></i> PHP Version</span>
-                        <span class="dash-system-value">v{{ phpversion() }}</span>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+                        <span style="color: #64748b;"><i class="fa fa-cogs mr-1"></i> PHP Version</span>
+                        <span style="color: #0f172a; font-weight: 600;">v{{ phpversion() }}</span>
                     </div>
-                    <div class="dash-system-item">
-                        <span class="dash-system-label"><i class="fa fa-database"></i> Database</span>
-                        <span class="dash-system-value">MySQL / MariaDB</span>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+                        <span style="color: #64748b;"><i class="fa fa-database mr-1"></i> Database</span>
+                        <span style="color: #0f172a; font-weight: 600;">MySQL / MariaDB</span>
                     </div>
-                    <div class="dash-system-item">
-                        <span class="dash-system-label"><i class="fa fa-shield"></i> Environment</span>
-                        <span class="dash-system-value badge badge-success text-white" style="font-size: 10px; padding: 3px 8px; border-radius: 6px;">{{ strtoupper(config('app.env')) }}</span>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                        <span style="color: #64748b;"><i class="fa fa-shield mr-1"></i> Environment</span>
+                        <span class="badge badge-success text-white" style="font-size: 10px; padding: 3px 8px; border-radius: 6px;">{{ strtoupper(config('app.env')) }}</span>
                     </div>
                 </div>
                 <div class="dash-card-footer">
@@ -529,137 +831,115 @@
 
 @include('admin.inc.footer')
 
-@push('scripts')
+<!-- Direct Script Execution for Chart.js (Guaranteed Execution After Footer Script Load) -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. Publishing Activity Trend Chart (Bar Chart)
-    var trendCtx = document.getElementById('publishTrendChart');
-    if (trendCtx) {
-        var labels = {!! json_encode($monthLabels) !!};
-        var counts = {!! json_encode($monthCounts) !!};
-
-        if (!labels || labels.length === 0) {
-            labels = ['Recent'];
-            counts = [{{ $posts }}];
+(function() {
+    var retryCount = 0;
+    function renderDashboardCharts() {
+        if (typeof Chart === 'undefined') {
+            if (retryCount < 20) {
+                retryCount++;
+                setTimeout(renderDashboardCharts, 150);
+            }
+            return;
         }
 
-        new Chart(trendCtx.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Articles Created',
-                    data: counts,
-                    backgroundColor: 'rgba(79, 70, 229, 0.85)',
-                    hoverBackgroundColor: 'rgba(67, 56, 202, 1)',
-                    borderColor: 'rgba(79, 70, 229, 1)',
-                    borderWidth: 1,
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                legend: {
-                    display: false
-                },
-                tooltips: {
-                    backgroundColor: '#0f172a',
-                    titleFontFamily: "'Inter', sans-serif",
-                    bodyFontFamily: "'Inter', sans-serif",
-                    titleFontSize: 13,
-                    bodyFontSize: 12,
-                    cornerRadius: 8,
-                    xPadding: 12,
-                    yPadding: 10,
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return ' Articles: ' + tooltipItem.yLabel;
-                        }
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        gridLines: {
-                            display: false,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            fontColor: '#64748b',
-                            fontSize: 11
-                        }
-                    }],
-                    yAxes: [{
-                        gridLines: {
-                            color: '#f1f5f9',
-                            zeroLineColor: '#e2e8f0',
-                            drawBorder: false
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            fontColor: '#64748b',
-                            fontSize: 11,
-                            precision: 0
-                        }
+        // 1. Publishing Activity Trend Chart (Bar Chart)
+        var trendElem = document.getElementById('publishTrendChart');
+        if (trendElem) {
+            var labels = @json($monthLabels);
+            var counts = @json($monthCounts);
+
+            new Chart(trendElem.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Articles Created',
+                        data: counts,
+                        backgroundColor: 'rgba(79, 70, 229, 0.85)',
+                        hoverBackgroundColor: 'rgba(67, 56, 202, 1)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1
                     }]
-                }
-            }
-        });
-    }
-
-    // 2. Status Distribution Doughnut Chart
-    var statusCtx = document.getElementById('statusBreakdownChart');
-    if (statusCtx) {
-        var activeCount = {{ (int) $active }};
-        var draftsCount = {{ (int) $drafts }};
-        var rejectedCount = {{ (int) $rejected }};
-
-        // Fallback if all 0
-        var chartData = [activeCount, draftsCount, rejectedCount];
-        if (activeCount === 0 && draftsCount === 0 && rejectedCount === 0) {
-            chartData = [1, 0, 0];
-        }
-
-        new Chart(statusCtx.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Published', 'Drafts', 'Rejected'],
-                datasets: [{
-                    data: chartData,
-                    backgroundColor: [
-                        '#10b981', // emerald
-                        '#f59e0b', // amber
-                        '#ef4444'  // rose
-                    ],
-                    borderWidth: 3,
-                    borderColor: '#ffffff',
-                    hoverBorderColor: '#ffffff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutoutPercentage: 68,
-                legend: {
-                    display: false
                 },
-                tooltips: {
-                    backgroundColor: '#0f172a',
-                    cornerRadius: 8,
-                    xPadding: 12,
-                    yPadding: 10,
-                    callbacks: {
-                        label: function(tooltipItem, data) {
-                            var dataset = data.datasets[tooltipItem.datasetIndex];
-                            var currentValue = dataset.data[tooltipItem.index];
-                            var currentLabel = data.labels[tooltipItem.index];
-                            return ' ' + currentLabel + ': ' + currentValue + ' posts';
-                        }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                display: false
+                            },
+                            ticks: {
+                                fontColor: '#64748b',
+                                fontSize: 11
+                            }
+                        }],
+                        yAxes: [{
+                            gridLines: {
+                                color: '#f1f5f9',
+                                zeroLineColor: '#e2e8f0',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: '#64748b',
+                                fontSize: 11,
+                                precision: 0
+                            }
+                        }]
                     }
                 }
+            });
+        }
+
+        // 2. Status Distribution Doughnut Chart
+        var statusElem = document.getElementById('statusBreakdownChart');
+        if (statusElem) {
+            var activeCount = {{ (int) $active }};
+            var draftsCount = {{ (int) $drafts }};
+            var rejectedCount = {{ (int) $rejected }};
+
+            var chartData = [activeCount, draftsCount, rejectedCount];
+            if (activeCount === 0 && draftsCount === 0 && rejectedCount === 0) {
+                chartData = [1, 0, 0];
             }
-        });
+
+            new Chart(statusElem.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Published', 'Drafts', 'Rejected'],
+                    datasets: [{
+                        data: chartData,
+                        backgroundColor: [
+                            '#10b981', // emerald
+                            '#f59e0b', // amber
+                            '#ef4444'  // rose
+                        ],
+                        borderWidth: 3,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutoutPercentage: 68,
+                    legend: {
+                        display: false
+                    }
+                }
+            });
+        }
     }
-});
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        renderDashboardCharts();
+    } else {
+        window.addEventListener('load', renderDashboardCharts);
+    }
+})();
 </script>
-@endpush
