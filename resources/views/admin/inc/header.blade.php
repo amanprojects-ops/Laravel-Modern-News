@@ -105,6 +105,9 @@
                                     title="{{ $settings->name ?? '' }}"
                                     onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
                                 />
+                                <span class="logo-text-fallback" style="display:none;">
+                                    {{ $settings->name ?? config('app.name') }}
+                                </span>
                                 @else
                                 <span class="logo-text-fallback">
                                     {{ $settings->name ?? config('app.name') }}
@@ -117,15 +120,18 @@
                         <div class="icon_setting"></div>
                         <div class="user_profle_side">
                             <div class="user_img">
-                                @php
-                                    $authUser   = Auth::user();
-                                    $uInitials  = collect(explode(' ', $authUser->name ?? 'A'))
-                                                    ->map(fn($w) => strtoupper($w[0]))
-                                                    ->take(2)->implode('');
-                                @endphp
-                                <div class="initials-avatar lg" title="{{ $authUser->name ?? '' }}">
-                                    {{ $uInitials }}
-                                </div>
+                                @if($settings->logo)
+                                <img class="logo_icon img-responsive"
+                                    src="{{ \App\Helpers\UploadHelper::url($settings->logo, 'images') }}"
+                                    alt="{{ $settings->name ?? 'Site Logo' }}"
+                                    title="{{ $settings->name ?? '' }}"
+                                    style="border-radius: 8px !important; object-fit: contain; width: 100%; height: 100%; padding: 4px; background: #fff;"
+                                />
+                                @endif
+                            </div>
+                            <div class="user_info">
+                                <h6>{{ Auth::user()->role == 1 ? 'Super Admin' : 'Admin' }}</h6>
+                                <p><span class="online_animation"></span> Online</p>
                             </div>
                         </div>
                     </div>
