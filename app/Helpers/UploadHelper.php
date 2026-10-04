@@ -63,16 +63,28 @@ class UploadHelper
      * Handles both old "images/xxx" style paths and new "uploads/images/xxx" paths.
      *
      * @param  string|null  $path
+     * @param  string       $defaultFolder (e.g. 'post_images') used if path has no folder
      * @return string|null
      */
-    public static function url(?string $path): ?string
+    public static function url(?string $path, string $defaultFolder = ''): ?string
     {
         if (!$path) return null;
+        
         // Already a full uploads/ path
         if (str_starts_with($path, 'uploads/')) {
             return asset($path);
         }
+        
         // Old storage-style path like "images/xxx.png" or "post_images/xxx.jpg"
+        if (str_contains($path, '/')) {
+            return asset('uploads/' . ltrim($path, '/'));
+        }
+
+        // Just a filename (e.g. old post images in DB)
+        if ($defaultFolder) {
+            return asset("uploads/" . trim($defaultFolder, '/') . "/{$path}");
+        }
+
         return asset('uploads/' . $path);
     }
 }

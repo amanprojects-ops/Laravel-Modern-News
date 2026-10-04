@@ -2,6 +2,19 @@
 <html lang="en">
 <?php
     $settings = \App\Models\Setting::first();
+    // Null-safe fallback so nothing crashes if settings row is missing
+    if (!$settings) {
+        $settings = new \App\Models\Setting([
+            'name'        => config('app.name', 'Admin Panel'),
+            'title'       => config('app.name', 'Admin Panel'),
+            'logo'        => null,
+            'logo_dark'   => null,
+            'favicon'     => null,
+            'keywords'    => '',
+            'description' => '',
+            'meta_author' => '',
+        ]);
+    }
 ?>
 
 <head>
@@ -12,12 +25,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
-    <title><?php echo e($title ?? 'Admin Panel'); ?></title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <title><?php echo e($title ?? ($settings->name ? $settings->name . ' — Admin Panel' : 'Admin Panel')); ?></title>
+    <meta name="keywords" content="<?php echo e($settings->keywords ?? ''); ?>">
+    <meta name="description" content="<?php echo e($settings->description ?? ''); ?>">
+    <meta name="author" content="<?php echo e($settings->meta_author ?? $settings->name ?? ''); ?>">
     <!-- site icon -->
-    <link rel="icon" href="<?php echo e(asset('storage/' . $settings->favicon)); ?>" type="image/png" />
+    <?php if($settings->favicon): ?>
+    <link rel="icon" href="<?php echo e(asset('uploads/' . $settings->favicon)); ?>" type="image/png" />
+    <?php endif; ?>
+    <?php if($settings->apple_touch_icon ?? null): ?>
+    <link rel="apple-touch-icon" href="<?php echo e(asset('uploads/' . $settings->apple_touch_icon)); ?>" />
+    <?php endif; ?>
     <!-- bootstrap css -->
     <link rel="stylesheet" href="<?php echo e(asset('backend/css/bootstrap.min.css')); ?>" />
     <!-- site css -->
@@ -33,6 +51,41 @@
 
     <link rel="stylesheet" href="<?php echo e(asset('backend/css/dataTables.css')); ?>" />
 
+    <style>
+    /* ── Initials Avatar ── */
+    .initials-avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #fff;
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .5px;
+        flex-shrink: 0;
+        text-transform: uppercase;
+        user-select: none;
+    }
+    .initials-avatar.lg {
+        width: 48px;
+        height: 48px;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+    /* ── Logo text fallback ── */
+    .logo-text-fallback {
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 6px 0;
+        display: block;
+    }
+    </style>
+
 </head>
 
 <body class="dashboard dashboard_1">
@@ -45,26 +98,42 @@
                     <div class="sidebar-header">
                         <div class="logo_section">
                             <a href="<?php echo e(url('/')); ?>">
-                                <img class="logo_icon img-responsive" src="<?php echo e(asset('storage/' . $settings->logo)); ?>"
-                                    alt="<?php echo e($settings->name); ?>" title="<?php echo e($settings->name); ?>" />
+                                <?php if($settings->logo): ?>
+                                <img class="logo_icon img-responsive"
+                                    src="<?php echo e(asset('uploads/images/' . $settings->logo)); ?>"
+                                    alt="<?php echo e($settings->name ?? 'Site Logo'); ?>"
+                                    title="<?php echo e($settings->name ?? ''); ?>"
+                                    onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
+                                />
+                                <?php else: ?>
+                                <span class="logo-text-fallback">
+                                    <?php echo e($settings->name ?? config('app.name')); ?>
+
+                                </span>
+                                <?php endif; ?>
                             </a>
                         </div>
                     </div>
                     <div class="sidebar_user_info">
                         <div class="icon_setting"></div>
                         <div class="user_profle_side">
-                            <div class="user_img"><img class="img-responsive"
-                                    src="<?php echo e(asset('storage/' . $settings->favicon)); ?>"
-                                    alt="<?php echo e($settings->name ?? 'ExamInfoBlog'); ?>" /></div>
-                            <div class="user_info">
-                                <h6><?php echo e(Auth::user()->role == 1 ? 'Super Admin' : 'Admin'); ?></h6>
-                                <p><span class="online_animation"></span> Online</p>
+                            <div class="user_img">
+                                <?php
+                                    $authUser   = Auth::user();
+                                    $uInitials  = collect(explode(' ', $authUser->name ?? 'A'))
+                                                    ->map(fn($w) => strtoupper($w[0]))
+                                                    ->take(2)->implode('');
+                                ?>
+                                <div class="initials-avatar lg" title="<?php echo e($authUser->name ?? ''); ?>">
+                                    <?php echo e($uInitials); ?>
+
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="sidebar_blog_2">
-                    <h4><?php echo e(Str::upper($settings->name) ?? 'ExamInfoBlog'); ?></h4>
+                    <h4><?php echo e(Str::upper($settings->name ?? config('app.name', 'NEWS ADMIN'))); ?></h4>
                     <ul class="list-unstyled components">
                         <!-- Deshboard List -->
                         <li class="active">
@@ -164,10 +233,16 @@
                                     </ul>
                                     <ul class="user_profile_dd">
                                         <li>
-                                            <a class="dropdown-toggle" data-toggle="dropdown">
-                                                <img class="img-responsive rounded-circle"
-                                                    src="<?php echo e(asset('backend/images/layout_img/user_img.jpg')); ?>"
-                                                    alt="#" />
+                                            <a class="dropdown-toggle" data-toggle="dropdown" style="display:flex;align-items:center;gap:8px;">
+                                                <?php
+                                                    $topInitials = collect(explode(' ', Auth::user()->name ?? 'A'))
+                                                                    ->map(fn($w) => strtoupper($w[0]))
+                                                                    ->take(2)->implode('');
+                                                ?>
+                                                <span class="initials-avatar" title="<?php echo e(Auth::user()->name ?? ''); ?>">
+                                                    <?php echo e($topInitials); ?>
+
+                                                </span>
                                                 <span class="name_user"><?php echo e(Auth::user()->name ?? 'Guest'); ?></span>
                                             </a>
                                             <div class="dropdown-menu">

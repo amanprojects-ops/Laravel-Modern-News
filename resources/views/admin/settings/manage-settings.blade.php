@@ -1,4 +1,4 @@
-﻿@include('admin.inc.header')
+@include('admin.inc.header')
 
 {{-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      SETTINGS PAGE STYLES
@@ -619,7 +619,7 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('logoInput').click()">
-                                <img id="previewLogo" src="{{ $settings->logo ? asset('uploads/' . $settings->logo) : 'https://placehold.co/200x80?text=Logo' }}" alt="Logo">
+                                <img id="previewLogo" src="{{ $settings->logo ? \App\Helpers\UploadHelper::url($settings->logo, 'images') : 'https://placehold.co/200x80?text=Logo' }}" alt="Logo">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="logoInput" name="logo" accept="image/*" class="d-none" onchange="previewImg(this,'previewLogo')">
@@ -640,7 +640,7 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('logoDarkInput').click()">
-                                <img id="previewLogoDark" src="{{ $settings->logo_dark ? asset('uploads/' . $settings->logo_dark) : 'https://placehold.co/200x80/1e293b/6366f1?text=Dark+Logo' }}" alt="Dark Logo">
+                                <img id="previewLogoDark" src="{{ $settings->logo_dark ? \App\Helpers\UploadHelper::url($settings->logo_dark, 'images') : 'https://placehold.co/200x80/1e293b/6366f1?text=Dark+Logo' }}" alt="Dark Logo">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="logoDarkInput" name="logo_dark" accept="image/*" class="d-none" onchange="previewImg(this,'previewLogoDark')">
@@ -660,7 +660,7 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('faviconInput').click()">
-                                <img id="previewFavicon" src="{{ $settings->favicon ? asset('uploads/' . $settings->favicon) : 'https://placehold.co/64x64?text=ICO' }}" alt="Favicon" style="max-height:80px;">
+                                <img id="previewFavicon" src="{{ $settings->favicon ? \App\Helpers\UploadHelper::url($settings->favicon, 'images') : 'https://placehold.co/64x64?text=ICO' }}" alt="Favicon" style="max-height:80px;">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="faviconInput" name="favicon" accept="image/*" class="d-none" onchange="previewImg(this,'previewFavicon')">
@@ -681,7 +681,7 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('appleTouchInput').click()">
-                                <img id="previewAppleTouch" src="{{ $settings->apple_touch_icon ? asset('uploads/' . $settings->apple_touch_icon) : 'https://placehold.co/180x180?text=Apple' }}" alt="Apple Touch Icon" style="max-height:80px;">
+                                <img id="previewAppleTouch" src="{{ $settings->apple_touch_icon ? \App\Helpers\UploadHelper::url($settings->apple_touch_icon, 'images') : 'https://placehold.co/180x180?text=Apple' }}" alt="Apple Touch Icon" style="max-height:80px;">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="appleTouchInput" name="apple_touch_icon" accept="image/*" class="d-none" onchange="previewImg(this,'previewAppleTouch')">
@@ -701,7 +701,7 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('ogImageInput').click()">
-                                <img id="previewOgImage" src="{{ $settings->og_image ? asset('uploads/' . $settings->og_image) : 'https://placehold.co/1200x630/1e293b/fff?text=OG+Image' }}" alt="OG Image">
+                                <img id="previewOgImage" src="{{ $settings->og_image ? \App\Helpers\UploadHelper::url($settings->og_image, 'images') : 'https://placehold.co/1200x630/1e293b/fff?text=OG+Image' }}" alt="OG Image">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="ogImageInput" name="og_image" accept="image/*" class="d-none" onchange="previewImg(this,'previewOgImage')">
@@ -721,7 +721,7 @@
                         </div>
                         <div class="s-card-body">
                             <div class="s-img-preview-box" onclick="document.getElementById('mainImageInput').click()">
-                                <img id="previewMainImage" src="{{ $settings->image ? asset('uploads/' . $settings->image) : 'https://placehold.co/800x400?text=Banner' }}" alt="Main Image">
+                                <img id="previewMainImage" src="{{ $settings->image ? \App\Helpers\UploadHelper::url($settings->image, 'images') : 'https://placehold.co/800x400?text=Banner' }}" alt="Main Image">
                                 <span class="s-img-upload-btn"><i class="fa fa-upload"></i> Click to upload</span>
                             </div>
                             <input type="file" id="mainImageInput" name="main_image" accept="image/*" class="d-none" onchange="previewImg(this,'previewMainImage')">

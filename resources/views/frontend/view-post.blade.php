@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('content')
     <style>
         .single-post table {
@@ -381,11 +381,7 @@
                 </div>
             </div>
             @php
-                if (Storage::disk('public')->exists($post->image)) {
-                    $post_image = asset('uploads/' . $post->image);
-                } else {
-                    $post_image = asset('uploads/post_images/' . $post->image);
-                }
+                $post_image = \App\Helpers\UploadHelper::url($post->image, 'post_images');
             @endphp
             <div class="post-image-container">
                 <img class="post-image-animated" src="{{ $post_image }}" alt="{{ $post->title }}" loading="lazy">

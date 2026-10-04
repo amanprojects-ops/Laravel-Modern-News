@@ -25,16 +25,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
-    <title>{{ $title ?? ($settings->name ? $settings->name . ' — Admin Panel' : 'Admin Panel') }}</title>
+    <title>{{ $title ?? ($settings->name ? $settings->name . ' â€” Admin Panel' : 'Admin Panel') }}</title>
     <meta name="keywords" content="{{ $settings->keywords ?? '' }}">
     <meta name="description" content="{{ $settings->description ?? '' }}">
     <meta name="author" content="{{ $settings->meta_author ?? $settings->name ?? '' }}">
     <!-- site icon -->
     @if($settings->favicon)
-    <link rel="icon" href="{{ asset('uploads/' . $settings->favicon) }}" type="image/png" />
+    <link rel="icon" href="{{ \App\Helpers\UploadHelper::url($settings->favicon, 'images') }}" type="image/png" />
     @endif
     @if($settings->apple_touch_icon ?? null)
-    <link rel="apple-touch-icon" href="{{ asset('uploads/' . $settings->apple_touch_icon) }}" />
+    <link rel="apple-touch-icon" href="{{ \App\Helpers\UploadHelper::url($settings->apple_touch_icon, 'images') }}" />
     @endif
     <!-- bootstrap css -->
     <link rel="stylesheet" href="{{ asset('backend/css/bootstrap.min.css') }}" />
@@ -52,7 +52,7 @@
     <link rel="stylesheet" href="{{ asset('backend/css/dataTables.css') }}" />
 
     <style>
-    /* ── Initials Avatar ── */
+    /* â”€â”€ Initials Avatar â”€â”€ */
     .initials-avatar {
         display: inline-flex;
         align-items: center;
@@ -75,7 +75,7 @@
         font-size: 1rem;
         border-radius: 10px;
     }
-    /* ── Logo text fallback ── */
+    /* â”€â”€ Logo text fallback â”€â”€ */
     .logo-text-fallback {
         color: #fff;
         font-size: 1.1rem;
@@ -100,7 +100,7 @@
                             <a href="{{ url('/') }}">
                                 @if($settings->logo)
                                 <img class="logo_icon img-responsive"
-                                    src="{{ asset('uploads/' . $settings->logo) }}"
+                                    src="{{ \App\Helpers\UploadHelper::url($settings->logo, 'images') }}"
                                     alt="{{ $settings->name ?? 'Site Logo' }}"
                                     title="{{ $settings->name ?? '' }}"
                                     onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
@@ -264,3 +264,4 @@
                 </div>
                 <!-- end topbar -->
                 <div class="midde_cont">
+

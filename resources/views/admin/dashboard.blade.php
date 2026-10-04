@@ -1,4 +1,4 @@
-﻿@include('admin.inc.header')
+@include('admin.inc.header')
 
 @php
     $posts = $posts ?? 0;
@@ -617,14 +617,9 @@
                         <tbody>
                             @forelse ($recentPosts as $post)
                                 @php
-                                    $imgSrc = null;
-                                    if (!empty($post->image)) {
-                                        if (str_starts_with($post->image, 'post_images/')) {
-                                            $imgSrc = asset('uploads/' . $post->image);
-                                        } else {
-                                            $imgSrc = asset('uploads/post_images/' . $post->image);
-                                        }
-                                    }
+                                    $imgSrc = !empty($post->image) 
+                                        ? \App\Helpers\UploadHelper::url($post->image, 'post_images') 
+                                        : null;
                                 @endphp
                                 <tr>
                                     <td>

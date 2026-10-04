@@ -1,4 +1,4 @@
-<?php echo $__env->make('admin.inc.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+﻿<?php echo $__env->make('admin.inc.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
 <?php
     $posts = $posts ?? 0;
@@ -319,7 +319,7 @@
                     </span>
                 </div>
                 <h1 class="dash-welcome-title">
-                    Welcome back, <?php echo e(Auth::user()->name ?? 'Administrator'); ?>! 👋
+                    Welcome back, <?php echo e(Auth::user()->name ?? 'Administrator'); ?>! ðŸ‘‹
                 </h1>
                 <p class="dash-welcome-sub">
                     Here is an overview of your news portal's publishing operations, audience metrics, and recent editorial activity.
@@ -621,9 +621,9 @@
                                     $imgSrc = null;
                                     if (!empty($post->image)) {
                                         if (str_starts_with($post->image, 'post_images/')) {
-                                            $imgSrc = asset('storage/' . $post->image);
+                                            $imgSrc = asset('uploads/' . $post->image);
                                         } else {
-                                            $imgSrc = asset('storage/post_images/' . $post->image);
+                                            $imgSrc = asset('uploads/post_images/' . $post->image);
                                         }
                                     }
                                 ?>
@@ -950,4 +950,5 @@
     }
 })();
 </script>
+
 <?php /**PATH C:\xampp\htdocs\Laravel-Modern-News\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>

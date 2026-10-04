@@ -1,4 +1,4 @@
-﻿@include('admin.inc.header')
+@include('admin.inc.header')
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -68,7 +68,7 @@
                                         <div class='card mb-4'>
                                             <img class='card-img' id='featuredimagepreview'
                                                 style='width: 100%; height: auto; object-fit: cover;'
-                                                src='{{ asset('uploads/post_images/' . $post->image) }}'
+                                                src='{{ \App\Helpers\UploadHelper::url($post->image, 'post_images') }}'
                                                 alt='{{ $post->title }}'>
                                         </div>
                                         <div class='form-text text-danger'>Upload a feature image for the
