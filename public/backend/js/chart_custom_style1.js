@@ -91,15 +91,21 @@
 			}]
 		};
 
-		// Define a plugin to provide data labels
+		// Define a plugin to provide data labels (applied only to demo #canvas chart)
 		Chart.plugins.register({
 			afterDatasetsDraw: function(chart) {
+				if (!chart.canvas || chart.canvas.id !== 'canvas') {
+					return;
+				}
 				var ctx = chart.ctx;
 
 				chart.data.datasets.forEach(function(dataset, i) {
 					var meta = chart.getDatasetMeta(i);
-					if (!meta.hidden) {
+					if (meta && !meta.hidden && meta.data) {
 						meta.data.forEach(function(element, index) {
+							if (!element || typeof element.tooltipPosition !== 'function') {
+								return;
+							}
 							// Draw the text in black, with the specified font
 							ctx.fillStyle = 'rgb(0, 0, 0)';
 
@@ -109,7 +115,7 @@
 							ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
 
 							// Just naively convert to string for now
-							var dataString = dataset.data[index].toString();
+							var dataString = (dataset.data && dataset.data[index] !== undefined) ? dataset.data[index].toString() : '';
 
 							// Make sure alignment settings are correct
 							ctx.textAlign = 'center';
@@ -117,7 +123,9 @@
 
 							var padding = 5;
 							var position = element.tooltipPosition();
-							ctx.fillText(dataString, position.x, position.y - (fontSize / 2) - padding);
+							if (position && position.x !== undefined && position.y !== undefined) {
+								ctx.fillText(dataString, position.x, position.y - (fontSize / 2) - padding);
+							}
 						});
 					}
 				});
