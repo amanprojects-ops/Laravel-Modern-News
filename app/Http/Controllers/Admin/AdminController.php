@@ -101,11 +101,7 @@ class AdminController
      */
     public function dashboard()
     {
-
-        return view('admin.dashboard', [
-            'title' => 'Admin Dashboard',
-            'active' => 'dashboard',
-        ]);
+        return $this->index();
     }
 
     /**

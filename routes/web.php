@@ -55,6 +55,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/', [AdminController::class, 'index']);
     //Post Management Routes
     Route::resource('posts', AdminPostController::class)->names([
         'index' => 'admin.posts.view',
